@@ -1,137 +1,513 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-<meta charset="UTF-8" />
-<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0" />
-<meta name="apple-mobile-web-app-capable" content="yes" />
-<meta name="apple-mobile-web-app-status-bar-style" content="default" />
-<meta name="apple-mobile-web-app-title" content="Randomist" />
-<title>Family Randomist Tracker</title>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0"/>
+<meta name="apple-mobile-web-app-capable" content="yes"/>
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent"/>
+<meta name="apple-mobile-web-app-title" content="Sanibel Randomist"/>
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;600;700&family=Nunito:wght@400;500;600;700&display=swap" rel="stylesheet"/>
+<title>Sanibel Family Randomist</title>
 <style>
-  :root{--bg:#ffffff;--bg2:#f5f5f4;--bg3:#eeede9;--text:#1a1a18;--text2:#6b6b67;--text3:#9b9b96;--border:rgba(0,0,0,0.12);--border2:rgba(0,0,0,0.22);--radius:10px;--radius-lg:14px;--success:#27500a;--success-bg:#eaf3de;--gold:#854F0B;--gold-bg:#FAEEDA;}
-  @media(prefers-color-scheme:dark){:root{--bg:#1c1c1e;--bg2:#2c2c2e;--bg3:#3a3a3c;--text:#f2f2f0;--text2:#aeaead;--text3:#6e6e6a;--border:rgba(255,255,255,0.12);--border2:rgba(255,255,255,0.22);--success:#c0dd97;--success-bg:#27500a;--gold:#FAC775;--gold-bg:#3a2e1a;}}
-  *{box-sizing:border-box;margin:0;padding:0;-webkit-tap-highlight-color:transparent;}
-  html,body{height:100%;font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;background:var(--bg3);color:var(--text);}
-  .app{max-width:480px;margin:0 auto;background:var(--bg3);min-height:100vh;padding-bottom:80px;}
-  .header{background:var(--bg);border-bottom:0.5px solid var(--border);padding:16px 16px 12px;position:sticky;top:0;z-index:10;}
-  .header h1{font-size:18px;font-weight:600;}.header p{font-size:12px;color:var(--text2);margin-top:2px;}
-  .bottom-nav{position:fixed;bottom:0;left:50%;transform:translateX(-50%);width:100%;max-width:480px;background:var(--bg);border-top:0.5px solid var(--border);display:flex;z-index:20;padding-bottom:env(safe-area-inset-bottom);}
-  .nav-btn{flex:1;display:flex;flex-direction:column;align-items:center;gap:3px;padding:10px 2px 8px;border:none;background:none;color:var(--text3);font-size:9px;cursor:pointer;transition:color 0.15s;}
-  .nav-btn.active{color:#185FA5;}.nav-icon{font-size:19px;line-height:1;}
-  .panel{display:none;padding:12px;}.panel.active{display:block;}
-  .card{background:var(--bg);border-radius:var(--radius-lg);padding:14px 16px;margin-bottom:10px;}
-  .section-label{font-size:11px;font-weight:600;color:var(--text2);text-transform:uppercase;letter-spacing:0.06em;margin-bottom:10px;}
-  .metric-grid{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:8px;margin-bottom:10px;}
-  .metric{background:var(--bg);border-radius:var(--radius);padding:10px 8px;text-align:center;}
-  .metric-label{font-size:10px;color:var(--text2);margin-bottom:3px;}.metric-value{font-size:20px;font-weight:600;}
-  .member-row{display:flex;align-items:center;gap:10px;padding:10px 0;border-bottom:0.5px solid var(--border);}
-  .member-row:last-child{border-bottom:none;}
-  .avatar{width:34px;height:34px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:12px;font-weight:600;flex-shrink:0;}
-  .log-step{background:var(--bg);border-radius:var(--radius-lg);padding:14px 16px;margin-bottom:10px;}
-  .log-step-title{font-size:13px;font-weight:600;margin-bottom:12px;}
-  .who-grid{display:flex;flex-wrap:wrap;gap:8px;}
-  .who-btn{display:flex;align-items:center;gap:6px;padding:7px 14px;border-radius:999px;border:1px solid var(--border2);cursor:pointer;font-size:13px;background:var(--bg2);color:var(--text);transition:all 0.15s;}
-  .who-btn.selected{border-width:2px;font-weight:600;}
-  .who-dot{width:10px;height:10px;border-radius:50%;flex-shrink:0;}
-  .cat-header{display:flex;align-items:center;gap:10px;padding:12px 0 8px;cursor:pointer;user-select:none;}
-  .cat-label{font-size:14px;font-weight:600;flex:1;}
-  .cat-chevron{font-size:12px;color:var(--text3);transition:transform 0.2s;}.cat-chevron.open{transform:rotate(90deg);}
-  .cat-body{display:none;}.cat-body.open{display:block;}
-  .activity-row{display:flex;align-items:flex-start;gap:10px;padding:10px 0;border-bottom:0.5px solid var(--border);cursor:pointer;border-radius:6px;transition:background 0.1s;}
-  .activity-row:last-child{border-bottom:none;}.activity-row:active{background:var(--bg2);}.activity-row.in-cart{background:var(--success-bg);}
-  .pts-badge{font-size:11px;font-weight:600;padding:3px 8px;border-radius:999px;white-space:nowrap;min-width:48px;text-align:center;flex-shrink:0;margin-top:1px;}
-  .beach-b{background:#E6F1FB;color:#185FA5;}.pool-b{background:#E1F5EE;color:#0F6E56;}.chall-b{background:#FAEEDA;color:#854F0B;}.games-b{background:#EEEDFE;color:#534AB7;}.bonus-b{background:#FBEAF0;color:#993556;}.wild-b{background:#FCEBEB;color:#A32D2D;}
-  .act-name{font-size:13px;font-weight:500;line-height:1.3;}.act-note{font-size:11px;color:var(--text2);margin-top:2px;}
-  .rep-tag{font-size:10px;background:#EEEDFE;color:#534AB7;padding:1px 6px;border-radius:999px;margin-left:5px;vertical-align:middle;}
-  .cart-check{width:20px;height:20px;border-radius:50%;background:#27500a;display:flex;align-items:center;justify-content:center;font-size:11px;color:#eaf3de;flex-shrink:0;margin-top:2px;}
-  .cart-section{background:var(--bg);border-radius:var(--radius-lg);padding:14px 16px;margin-bottom:10px;}
-  .cart-section-title{font-size:13px;font-weight:600;margin-bottom:10px;display:flex;align-items:center;gap:8px;}
-  .cart-badge{background:#185FA5;color:white;border-radius:999px;font-size:11px;font-weight:700;padding:1px 8px;}
-  .cart-item{display:flex;align-items:center;gap:10px;padding:8px 0;border-bottom:0.5px solid var(--border);}
-  .cart-item:last-child{border-bottom:none;}
-  .cart-item-name{font-size:13px;font-weight:500;line-height:1.3;}.cart-item-cat{font-size:11px;color:var(--text2);}
-  .cart-remove{width:28px;height:28px;border-radius:50%;background:var(--bg2);border:0.5px solid var(--border2);color:var(--text3);font-size:16px;cursor:pointer;display:flex;align-items:center;justify-content:center;flex-shrink:0;transition:background 0.15s,color 0.15s;}
-  .cart-remove:hover{background:#FCEBEB;color:#A32D2D;border-color:#A32D2D;}.cart-remove:active{transform:scale(0.92);}
-  .note-input{width:100%;font-size:14px;padding:10px 12px;border:1px solid var(--border2);border-radius:var(--radius);background:var(--bg);color:var(--text);margin-bottom:10px;}
-  .note-input:focus{outline:none;border-color:#185FA5;}
-  .btn-primary{width:100%;background:var(--text);color:var(--bg);border:none;border-radius:var(--radius);padding:13px;font-size:15px;font-weight:600;cursor:pointer;}
-  .btn-primary:active{opacity:0.8;}.btn-primary:disabled{opacity:0.35;cursor:default;}
-  .event-log{max-height:260px;overflow-y:auto;}
-  .event-item{display:flex;align-items:center;gap:8px;padding:8px 0;border-bottom:0.5px solid var(--border);font-size:13px;}
-  .event-item:last-child{border-bottom:none;}
-  .event-pts{font-weight:600;color:var(--success);min-width:36px;text-align:right;flex-shrink:0;}
-  .event-name{font-weight:500;}.event-detail{font-size:12px;color:var(--text2);}
-  .delete-btn{width:26px;height:26px;border-radius:50%;background:var(--bg2);border:0.5px solid var(--border2);color:var(--text3);font-size:14px;cursor:pointer;display:flex;align-items:center;justify-content:center;flex-shrink:0;transition:background 0.15s,color 0.15s;}
-  .delete-btn:hover{background:#FCEBEB;color:#A32D2D;border-color:#A32D2D;}.delete-btn:active{transform:scale(0.92);}
-  /* Badge grid — always shows all badges */
-  .badge-member-block{margin-bottom:20px;}
-  .badge-member-header{display:flex;align-items:center;gap:8px;margin-bottom:10px;}
-  .badge-progress{font-size:12px;color:var(--text2);}
-  .badge-grid-wrap{display:flex;flex-wrap:wrap;gap:6px;}
-  .badge-pill{display:inline-flex;align-items:center;gap:4px;padding:5px 11px;border-radius:999px;font-size:12px;font-weight:500;}
-  .badge-earned{background:var(--success-bg);color:var(--success);border:1px solid rgba(39,80,10,0.2);}
-  .badge-locked{background:var(--bg2);color:var(--text3);border:0.5px solid var(--border);}
-  .badge-desc{font-size:10px;margin-top:1px;opacity:0.75;}
-  /* Expandable badge details */
-  .badge-pill-wrap{display:inline-flex;flex-direction:column;align-items:center;margin:3px;}
-  .text-preview{background:var(--bg2);border-radius:var(--radius);padding:14px;font-size:13px;line-height:1.65;color:var(--text);white-space:pre-wrap;font-family:'Menlo','Courier New',monospace;}
-  .btn-secondary{width:100%;background:none;color:var(--text);border:1px solid var(--border2);border-radius:var(--radius);padding:12px;font-size:14px;font-weight:500;cursor:pointer;margin-top:8px;}
-  .btn-secondary:active{background:var(--bg2);}
-  .prize-card{background:var(--gold-bg);border-radius:var(--radius-lg);padding:16px;margin-bottom:10px;border:1px solid rgba(133,79,11,0.2);}
-  .prize-title{font-size:13px;font-weight:700;color:var(--gold);margin-bottom:4px;}.prize-desc{font-size:13px;line-height:1.5;}
-  .rule-item{display:flex;align-items:flex-start;gap:10px;padding:12px 0;border-bottom:0.5px solid var(--border);}
-  .rule-item:last-child{border-bottom:none;}
-  .rule-num{width:24px;height:24px;border-radius:50%;background:var(--bg2);display:flex;align-items:center;justify-content:center;font-size:12px;font-weight:700;color:var(--text2);flex-shrink:0;margin-top:1px;}
-  .rule-text{font-size:13px;line-height:1.5;flex:1;}.rule-text strong{font-weight:600;}
-  .print-wrap{overflow-x:auto;}
-  .print-table{width:100%;border-collapse:collapse;font-size:11px;}
-  .print-table th{background:var(--bg2);padding:7px 8px;text-align:left;border:0.5px solid var(--border);font-weight:600;}
-  .print-table td{padding:6px 8px;border:0.5px solid var(--border);}
-  .print-table .cat-row td{background:var(--bg3);font-weight:600;font-size:12px;}
-  .print-table .total-row td{font-weight:600;background:var(--bg2);}
-  .rules-print{margin-top:16px;padding-top:14px;border-top:1px solid var(--border);}
-  .rules-print-title{font-size:13px;font-weight:700;margin-bottom:8px;}
-  .rules-print-list{font-size:11px;line-height:1.8;}
-  @media print{
-    body{background:white;color:black;}
-    .bottom-nav,.header,.panel:not(.active){display:none!important;}
-    .panel.active{display:block!important;padding:20px;}.app{max-width:100%;}
-    .print-table th,.print-table td{border:1px solid #ccc;color:black;background:white!important;}
-    .print-table .cat-row td{background:#f0f0f0!important;}.print-table .total-row td{background:#f5f5f5!important;}
-    .rules-print{border-top:1px solid #ccc;}
-  }
-  .toast{position:fixed;bottom:90px;left:50%;transform:translateX(-50%);background:var(--text);color:var(--bg);padding:10px 20px;border-radius:var(--radius);font-size:13px;opacity:0;transition:opacity 0.2s;pointer-events:none;z-index:100;white-space:nowrap;}
-  .toast.show{opacity:1;}
-  .divider{height:0.5px;background:var(--border);margin:2px 0;}
-  .empty-cart{font-size:13px;color:var(--text3);text-align:center;padding:16px 0;}
+:root {
+  --sand:     #F5EDD6;
+  --sand2:    #EDE0BF;
+  --sand3:    #E0CFA0;
+  --ocean:    #2B7A8C;
+  --ocean2:   #1E6070;
+  --ocean3:   #154A57;
+  --teal:     #4DBDCF;
+  --teal2:    #3AA8BA;
+  --seafoam:  #A8D8C8;
+  --coral:    #E06B5A;
+  --coral2:   #C4553F;
+  --gold:     #D4933A;
+  --gold2:    #B87B28;
+  --shell:    #F2C88A;
+  --white:    #FDFAF4;
+  --text:     #2C2418;
+  --text2:    #6B5B3E;
+  --text3:    #A08C6A;
+  --border:   rgba(44,36,24,0.12);
+  --border2:  rgba(44,36,24,0.22);
+  --radius:   12px;
+  --radius-lg:18px;
+  --success:  #2C6E4A;
+  --success-bg:#C8E6D4;
+  --font-display: 'Playfair Display', Georgia, serif;
+  --font-body:    'Nunito', sans-serif;
+}
+
+*{box-sizing:border-box;margin:0;padding:0;-webkit-tap-highlight-color:transparent;}
+
+html,body {
+  height:100%;
+  font-family: var(--font-body);
+  background: var(--ocean2);
+  color: var(--text);
+  overflow-x: hidden;
+}
+
+/* ---- Wallpaper background ---- */
+.wallpaper {
+  position: fixed;
+  inset: 0;
+  z-index: 0;
+  overflow: hidden;
+}
+
+.app {
+  position: relative;
+  z-index: 1;
+  max-width: 480px;
+  margin: 0 auto;
+  min-height: 100vh;
+  padding-bottom: 84px;
+  background: transparent;
+}
+
+/* ---- Header ---- */
+.header {
+  background: linear-gradient(180deg, var(--ocean3) 0%, var(--ocean2) 100%);
+  padding: 20px 16px 14px;
+  position: sticky;
+  top: 0;
+  z-index: 10;
+  border-bottom: 2px solid var(--teal);
+  box-shadow: 0 2px 20px rgba(0,0,0,0.25);
+}
+.header-title {
+  font-family: var(--font-display);
+  font-size: 22px;
+  font-weight: 700;
+  color: var(--shell);
+  letter-spacing: 0.01em;
+  line-height: 1.1;
+}
+.header-sub {
+  font-size: 12px;
+  color: var(--seafoam);
+  margin-top: 3px;
+  letter-spacing: 0.04em;
+}
+
+/* ---- Bottom nav ---- */
+.bottom-nav {
+  position: fixed;
+  bottom: 0;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 100%;
+  max-width: 480px;
+  background: linear-gradient(180deg, var(--ocean3) 0%, #0F3740 100%);
+  border-top: 2px solid var(--teal);
+  display: flex;
+  z-index: 20;
+  padding-bottom: env(safe-area-inset-bottom);
+  box-shadow: 0 -4px 20px rgba(0,0,0,0.3);
+}
+.nav-btn {
+  flex:1;display:flex;flex-direction:column;align-items:center;gap:3px;
+  padding:10px 2px 8px;border:none;background:none;
+  color: var(--seafoam);
+  font-size:9px;font-family:var(--font-body);cursor:pointer;transition:color 0.15s;
+  opacity: 0.7;
+}
+.nav-btn.active { color: var(--shell); opacity: 1; }
+.nav-icon { font-size:20px;line-height:1; }
+
+/* ---- Panels ---- */
+.panel { display:none; padding:12px; }
+.panel.active { display:block; }
+
+/* ---- Cards ---- */
+.card {
+  background: rgba(253,250,244,0.93);
+  backdrop-filter: blur(8px);
+  border-radius: var(--radius-lg);
+  padding: 14px 16px;
+  margin-bottom: 10px;
+  border: 1px solid rgba(255,255,255,0.6);
+  box-shadow: 0 2px 12px rgba(21,74,87,0.15);
+}
+
+.section-label {
+  font-size: 10px;
+  font-weight: 700;
+  color: var(--ocean2);
+  text-transform: uppercase;
+  letter-spacing: 0.1em;
+  margin-bottom: 10px;
+}
+
+/* ---- Metrics ---- */
+.metric-grid { display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:8px;margin-bottom:10px; }
+.metric {
+  background: linear-gradient(135deg, var(--ocean2), var(--ocean3));
+  border-radius: var(--radius);
+  padding: 10px 8px;
+  text-align: center;
+  border: 1px solid var(--teal);
+}
+.metric-label { font-size:10px;color:var(--seafoam);margin-bottom:3px;font-weight:600;letter-spacing:0.05em; }
+.metric-value { font-size:20px;font-weight:700;color:var(--shell); }
+
+/* ---- Leaderboard ---- */
+.member-row { display:flex;align-items:center;gap:10px;padding:10px 0;border-bottom:1px dashed var(--sand3); }
+.member-row:last-child { border-bottom:none; }
+.avatar { width:36px;height:36px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:13px;font-weight:700;flex-shrink:0;border:2px solid rgba(255,255,255,0.5); }
+
+/* ---- Log step ---- */
+.log-step {
+  background: rgba(253,250,244,0.93);
+  backdrop-filter: blur(8px);
+  border-radius: var(--radius-lg);
+  padding: 14px 16px;
+  margin-bottom: 10px;
+  border: 1px solid rgba(255,255,255,0.6);
+  box-shadow: 0 2px 12px rgba(21,74,87,0.15);
+}
+.log-step-title { font-size:13px;font-weight:700;margin-bottom:12px;color:var(--ocean3); }
+
+.who-grid { display:flex;flex-wrap:wrap;gap:8px; }
+.who-btn {
+  display:flex;align-items:center;gap:6px;padding:8px 16px;
+  border-radius:999px;border:2px solid var(--sand3);
+  cursor:pointer;font-size:13px;font-weight:600;font-family:var(--font-body);
+  background: var(--white);color:var(--text2);transition:all 0.15s;
+}
+.who-btn.selected { border-color: var(--ocean); background: var(--ocean); color: white; }
+.who-dot { width:10px;height:10px;border-radius:50%;flex-shrink:0; }
+
+/* ---- Category accordion ---- */
+.cat-header { display:flex;align-items:center;gap:10px;padding:12px 0 8px;cursor:pointer;user-select:none; }
+.cat-label { font-size:14px;font-weight:700;flex:1;color:var(--ocean3); }
+.cat-chevron { font-size:12px;color:var(--text3);transition:transform 0.2s; }
+.cat-chevron.open { transform:rotate(90deg); }
+.cat-body { display:none; }
+.cat-body.open { display:block; }
+
+.activity-row {
+  display:flex;align-items:flex-start;gap:10px;padding:10px 0;
+  border-bottom:1px dashed var(--sand3);cursor:pointer;border-radius:8px;transition:background 0.1s;
+}
+.activity-row:last-child { border-bottom:none; }
+.activity-row:active { background:rgba(75,189,207,0.1); }
+.activity-row.in-cart { background:rgba(168,216,200,0.3);border-radius:8px; }
+
+.pts-badge { font-size:11px;font-weight:700;padding:3px 9px;border-radius:999px;white-space:nowrap;min-width:50px;text-align:center;flex-shrink:0;margin-top:1px; }
+.beach-b  { background:#DBEEFF;color:#1A5C8A; }
+.pool-b   { background:#C8F0E8;color:#0E5C46; }
+.chall-b  { background:#FFF0CC;color:#7A5010; }
+.games-b  { background:#EDE8FF;color:#4A3A99; }
+.bonus-b  { background:#FFE8E4;color:#8A3020; }
+.wild-b   { background:#FFE4CC;color:#8A4010; }
+
+.act-name { font-size:13px;font-weight:600;line-height:1.3;color:var(--text); }
+.act-note { font-size:11px;color:var(--text3);margin-top:2px; }
+.rep-tag  { font-size:10px;background:#EDE8FF;color:#4A3A99;padding:1px 6px;border-radius:999px;margin-left:5px;vertical-align:middle; }
+.cart-check { width:20px;height:20px;border-radius:50%;background:var(--ocean);display:flex;align-items:center;justify-content:center;font-size:11px;color:white;flex-shrink:0;margin-top:2px; }
+
+/* ---- Cart ---- */
+.cart-section {
+  background: rgba(253,250,244,0.93);
+  backdrop-filter: blur(8px);
+  border-radius: var(--radius-lg);
+  padding: 14px 16px;
+  margin-bottom: 10px;
+  border: 1px solid rgba(255,255,255,0.6);
+  box-shadow: 0 2px 12px rgba(21,74,87,0.15);
+}
+.cart-section-title { font-size:13px;font-weight:700;margin-bottom:10px;display:flex;align-items:center;gap:8px;color:var(--ocean3); }
+.cart-badge { background:var(--ocean);color:white;border-radius:999px;font-size:11px;font-weight:700;padding:2px 9px; }
+.cart-item { display:flex;align-items:center;gap:10px;padding:8px 0;border-bottom:1px dashed var(--sand3); }
+.cart-item:last-child { border-bottom:none; }
+.cart-item-name { font-size:13px;font-weight:600;line-height:1.3; }
+.cart-item-cat { font-size:11px;color:var(--text3); }
+.cart-remove { width:28px;height:28px;border-radius:50%;background:var(--sand2);border:1px solid var(--sand3);color:var(--text3);font-size:16px;cursor:pointer;display:flex;align-items:center;justify-content:center;flex-shrink:0;transition:all 0.15s; }
+.cart-remove:hover { background:#FFE4CC;color:var(--coral);border-color:var(--coral); }
+
+.note-input {
+  width:100%;font-size:14px;font-family:var(--font-body);
+  padding:10px 12px;border:2px solid var(--sand3);border-radius:var(--radius);
+  background:var(--white);color:var(--text);margin-bottom:10px;
+}
+.note-input:focus { outline:none;border-color:var(--teal); }
+
+.btn-primary {
+  width:100%;
+  background: linear-gradient(135deg, var(--ocean), var(--teal2));
+  color:white;border:none;border-radius:var(--radius);
+  padding:14px;font-size:15px;font-weight:700;font-family:var(--font-body);
+  cursor:pointer;letter-spacing:0.02em;
+  box-shadow: 0 3px 12px rgba(21,74,87,0.35);
+  transition: opacity 0.15s;
+}
+.btn-primary:active { opacity:0.85; }
+.btn-primary:disabled { opacity:0.35;cursor:default; }
+
+.event-log { max-height:260px;overflow-y:auto; }
+.event-item { display:flex;align-items:center;gap:8px;padding:8px 0;border-bottom:1px dashed var(--sand3);font-size:13px; }
+.event-item:last-child { border-bottom:none; }
+.event-pts { font-weight:700;color:var(--ocean2);min-width:36px;text-align:right;flex-shrink:0; }
+.event-name { font-weight:600; }
+.event-detail { font-size:12px;color:var(--text3); }
+.delete-btn { width:26px;height:26px;border-radius:50%;background:var(--sand2);border:1px solid var(--sand3);color:var(--text3);font-size:14px;cursor:pointer;display:flex;align-items:center;justify-content:center;flex-shrink:0;transition:all 0.15s; }
+.delete-btn:hover { background:#FFE4CC;color:var(--coral);border-color:var(--coral); }
+
+/* ---- Badges ---- */
+.badge-member-block { margin-bottom:20px; }
+.badge-member-header { display:flex;align-items:center;gap:8px;margin-bottom:10px; }
+.badge-progress { font-size:12px;color:var(--text3); }
+.badge-grid-wrap { display:flex;flex-wrap:wrap;gap:6px; }
+.badge-pill { display:inline-flex;align-items:center;gap:4px;padding:5px 11px;border-radius:999px;font-size:12px;font-weight:600;font-family:var(--font-body); }
+.badge-earned { background:linear-gradient(135deg,#C8F0E8,#A8D8C8);color:#0E5C46;border:1px solid rgba(14,92,70,0.2); }
+.badge-locked { background:var(--sand2);color:var(--text3);border:1px solid var(--sand3); }
+
+/* ---- Text preview ---- */
+.text-preview {
+  background:var(--ocean3);border-radius:var(--radius);
+  padding:14px;font-size:13px;line-height:1.65;
+  color:var(--seafoam);white-space:pre-wrap;
+  font-family:'Menlo','Courier New',monospace;
+  border:1px solid var(--teal);
+}
+
+.btn-secondary {
+  width:100%;background:none;color:var(--ocean2);
+  border:2px solid var(--ocean);border-radius:var(--radius);
+  padding:12px;font-size:14px;font-weight:700;font-family:var(--font-body);
+  cursor:pointer;margin-top:8px;transition:all 0.15s;
+}
+.btn-secondary:active { background:rgba(43,122,140,0.1); }
+
+/* ---- Prize cards ---- */
+.prize-card {
+  background: linear-gradient(135deg, var(--ocean2), var(--ocean3));
+  border-radius:var(--radius-lg);padding:16px;margin-bottom:10px;
+  border:1px solid var(--teal);
+  box-shadow:0 3px 12px rgba(0,0,0,0.2);
+}
+.prize-title { font-family:var(--font-display);font-size:15px;font-weight:700;color:var(--shell);margin-bottom:4px; }
+.prize-desc { font-size:13px;color:var(--seafoam);line-height:1.5; }
+.prize-desc strong { color:white; }
+
+.rule-item { display:flex;align-items:flex-start;gap:10px;padding:12px 0;border-bottom:1px dashed var(--sand3); }
+.rule-item:last-child { border-bottom:none; }
+.rule-num { width:26px;height:26px;border-radius:50%;background:var(--ocean);display:flex;align-items:center;justify-content:center;font-size:12px;font-weight:700;color:white;flex-shrink:0;margin-top:1px; }
+.rule-text { font-size:13px;line-height:1.5;flex:1; }
+.rule-text strong { font-weight:700;color:var(--ocean3); }
+
+/* ---- Print ---- */
+.print-wrap { overflow-x:auto; }
+.print-table { width:100%;border-collapse:collapse;font-size:11px; }
+.print-table th { background:var(--ocean3);color:white;padding:7px 8px;text-align:left;border:1px solid var(--ocean2);font-weight:700; }
+.print-table td { padding:6px 8px;border:1px solid var(--sand3); }
+.print-table .cat-row td { background:var(--ocean2);color:white;font-weight:700;font-size:12px; }
+.print-table .total-row td { font-weight:700;background:var(--sand2); }
+.rules-print { margin-top:16px;padding-top:14px;border-top:2px solid var(--sand3); }
+.rules-print-title { font-family:var(--font-display);font-size:14px;font-weight:700;margin-bottom:8px;color:var(--ocean3); }
+.rules-print-list { font-size:11px;line-height:1.8;color:var(--text2); }
+
+@media print {
+  body { background:white;color:black; }
+  .wallpaper,.bottom-nav,.header,.panel:not(.active) { display:none!important; }
+  .panel.active { display:block!important;padding:20px; }
+  .app { max-width:100%; }
+  .card,.log-step,.cart-section { background:white;box-shadow:none;border:1px solid #ddd; }
+  .print-table th { background:#1E6070!important;color:white!important; }
+  .print-table .cat-row td { background:#2B7A8C!important;color:white!important; }
+  .print-table .total-row td { background:#f5f5f5!important; }
+}
+
+.toast { position:fixed;bottom:95px;left:50%;transform:translateX(-50%);background:var(--ocean3);color:var(--seafoam);padding:10px 20px;border-radius:var(--radius);font-size:13px;font-weight:600;opacity:0;transition:opacity 0.2s;pointer-events:none;z-index:100;white-space:nowrap;border:1px solid var(--teal); }
+.toast.show { opacity:1; }
+.divider { height:1px;background:var(--sand3);margin:2px 0; }
+.empty-cart { font-size:13px;color:var(--text3);text-align:center;padding:16px 0; }
 </style>
 </head>
 <body>
+
+<!-- SVG Wallpaper -->
+<div class="wallpaper">
+<svg width="100%" height="100%" xmlns="http://www.w3.org/2000/svg" preserveAspectRatio="xMidYMid slice">
+  <defs>
+    <linearGradient id="sky" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0%" stop-color="#1B4F6B"/>
+      <stop offset="60%" stop-color="#2B7A8C"/>
+      <stop offset="100%" stop-color="#3AA8BA"/>
+    </linearGradient>
+    <linearGradient id="water" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0%" stop-color="#3AA8BA"/>
+      <stop offset="100%" stop-color="#2B7A8C"/>
+    </linearGradient>
+    <linearGradient id="sandGrad" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0%" stop-color="#EDE0BF"/>
+      <stop offset="100%" stop-color="#D4C49A"/>
+    </linearGradient>
+    <radialGradient id="sun" cx="50%" cy="50%" r="50%">
+      <stop offset="0%" stop-color="#FFE897"/>
+      <stop offset="60%" stop-color="#F5C842"/>
+      <stop offset="100%" stop-color="#F5C842" stop-opacity="0"/>
+    </radialGradient>
+  </defs>
+
+  <!-- Sky -->
+  <rect width="100%" height="100%" fill="url(#sky)"/>
+
+  <!-- Sun glow -->
+  <ellipse cx="75%" cy="18%" rx="80" ry="80" fill="url(#sun)" opacity="0.35"/>
+  <ellipse cx="75%" cy="18%" rx="38" ry="38" fill="#FFE897" opacity="0.9"/>
+
+  <!-- Sun rays -->
+  <g opacity="0.15" stroke="#FFE897" stroke-width="1.5">
+    <line x1="75%" y1="3%" x2="75%" y2="8%"/>
+    <line x1="75%" y1="28%" x2="75%" y2="33%"/>
+    <line x1="60%" y1="18%" x2="55%" y2="18%"/>
+    <line x1="90%" y1="18%" x2="95%" y2="18%"/>
+    <line x1="63%" y1="6%" x2="60%" y2="3%"/>
+    <line x1="87%" y1="6%" x2="90%" y2="3%"/>
+    <line x1="63%" y1="30%" x2="60%" y2="33%"/>
+    <line x1="87%" y1="30%" x2="90%" y2="33%"/>
+  </g>
+
+  <!-- Distant island/mangroves horizon -->
+  <ellipse cx="20%" cy="52%" rx="120" ry="18" fill="#154A57" opacity="0.6"/>
+  <ellipse cx="10%" cy="51%" rx="70" ry="14" fill="#0F3740" opacity="0.5"/>
+  <!-- Mangrove silhouettes left -->
+  <path d="M0,520 Q20,480 40,490 Q60,470 80,485 Q100,465 120,480 Q140,460 160,475 L160,600 L0,600Z" fill="#0F3740" opacity="0.7"/>
+  <!-- Palm tree left -->
+  <line x1="30" y1="540" x2="38" y2="420" stroke="#1a3a28" stroke-width="5" stroke-linecap="round"/>
+  <path d="M38,420 Q10,400 -10,390" stroke="#2d6a3a" stroke-width="4" stroke-linecap="round" fill="none"/>
+  <path d="M38,420 Q60,395 80,382" stroke="#2d6a3a" stroke-width="4" stroke-linecap="round" fill="none"/>
+  <path d="M38,420 Q30,395 15,375" stroke="#2d6a3a" stroke-width="4" stroke-linecap="round" fill="none"/>
+  <path d="M38,420 Q55,410 72,405" stroke="#2d6a3a" stroke-width="4" stroke-linecap="round" fill="none"/>
+  <path d="M38,420 Q20,410 5,408" stroke="#2d6a3a" stroke-width="4" stroke-linecap="round" fill="none"/>
+
+  <!-- Water shimmer waves -->
+  <g opacity="0.18" stroke="white" stroke-width="1.5" fill="none">
+    <path d="M0,520 Q60,510 120,520 Q180,530 240,518 Q300,506 360,518 Q420,530 480,518"/>
+    <path d="M0,535 Q80,524 160,535 Q240,546 320,533 Q400,520 480,533" opacity="0.6"/>
+    <path d="M0,550 Q100,538 200,550 Q300,562 400,548 Q440,541 480,548" opacity="0.4"/>
+  </g>
+
+  <!-- Gulf water band -->
+  <path d="M0,500 Q120,488 240,500 Q360,512 480,500 L480,600 L0,600Z" fill="url(#water)" opacity="0.55"/>
+
+  <!-- Sand -->
+  <path d="M0,570 Q80,555 160,562 Q240,570 320,558 Q400,546 480,558 L480,100% L0,100%Z" fill="url(#sandGrad)"/>
+
+  <!-- Sand ripples -->
+  <g opacity="0.25" stroke="#C4B48A" stroke-width="1" fill="none">
+    <path d="M20,600 Q100,592 180,598 Q260,604 340,596"/>
+    <path d="M60,618 Q140,609 220,616 Q300,623 380,613"/>
+    <path d="M0,635 Q80,626 160,633 Q240,640 320,630 Q400,620 480,628"/>
+  </g>
+
+  <!-- Shells on sand -->
+  <!-- Conch shell right side -->
+  <g transform="translate(340,595)" opacity="0.75">
+    <ellipse cx="0" cy="0" rx="18" ry="10" fill="#F2C88A" transform="rotate(-20)"/>
+    <ellipse cx="6" cy="-2" rx="10" ry="6" fill="#E8A86A" transform="rotate(-20)"/>
+    <path d="M-12,5 Q0,0 15,-8" stroke="#D4933A" stroke-width="1.5" fill="none" stroke-linecap="round"/>
+    <ellipse cx="-8" cy="6" rx="5" ry="3" fill="#F5D4A0" transform="rotate(10)"/>
+  </g>
+  <!-- Small spiral shell -->
+  <g transform="translate(80,608)" opacity="0.65">
+    <ellipse cx="0" cy="0" rx="9" ry="6" fill="#F5D4A0" transform="rotate(15)"/>
+    <path d="M-5,2 Q0,-2 6,-1" stroke="#D4B870" stroke-width="1.2" fill="none"/>
+  </g>
+  <!-- Starfish -->
+  <g transform="translate(220,590)" opacity="0.7">
+    <path d="M0,-14 L3,-4 L13,-4 L5,2 L8,12 L0,7 L-8,12 L-5,2 L-13,-4 L-3,-4Z" fill="#E06B5A" opacity="0.8"/>
+  </g>
+  <!-- Clamshell -->
+  <g transform="translate(160,602)" opacity="0.6">
+    <path d="M-10,0 Q0,-12 10,0 Q5,5 -5,5Z" fill="#DBEEFF" stroke="#B5C8E0" stroke-width="0.8"/>
+    <path d="M-8,0 Q0,-3 8,0" stroke="#B5C8E0" stroke-width="0.5" fill="none"/>
+  </g>
+  <!-- Sand dollar -->
+  <g transform="translate(400,585)" opacity="0.55">
+    <ellipse cx="0" cy="0" rx="12" ry="11" fill="#F0E8D0" stroke="#D4C49A" stroke-width="1"/>
+    <ellipse cx="0" cy="-5" rx="2" ry="3" fill="#D4C49A" opacity="0.5"/>
+    <ellipse cx="4" cy="3" rx="2" ry="3" fill="#D4C49A" opacity="0.5" transform="rotate(72,0,0)"/>
+    <ellipse cx="-4" cy="3" rx="2" ry="3" fill="#D4C49A" opacity="0.5" transform="rotate(-72,0,0)"/>
+  </g>
+
+  <!-- Pelican silhouette -->
+  <g transform="translate(55,380)" opacity="0.7">
+    <ellipse cx="0" cy="0" rx="16" ry="10" fill="#1B3A50"/>
+    <ellipse cx="12" cy="-6" rx="9" ry="7" fill="#1B3A50"/>
+    <path d="M20,-8 L42,-5 L38,0 L20,-4Z" fill="#1B3A50"/>
+    <path d="M-14,2 L-30,18 L-26,20 L-10,6Z" fill="#1B3A50"/>
+    <path d="M14,2 L30,8 L28,12 L12,6Z" fill="#1B3A50"/>
+  </g>
+  <!-- Flying pelican far right -->
+  <g transform="translate(390,330)" opacity="0.4">
+    <path d="M0,0 Q-20,-5 -35,0" stroke="#1B3A50" stroke-width="3" fill="none" stroke-linecap="round"/>
+    <path d="M0,0 Q20,-5 35,0" stroke="#1B3A50" stroke-width="3" fill="none" stroke-linecap="round"/>
+    <ellipse cx="0" cy="0" rx="8" ry="5" fill="#1B3A50"/>
+    <path d="M7,-3 L22,-5 L20,0 L7,0Z" fill="#1B3A50"/>
+  </g>
+
+  <!-- Sea oats / beach grass -->
+  <g opacity="0.5" stroke="#8A7A40" stroke-width="1.5" fill="none">
+    <line x1="420" y1="580" x2="418" y2="548"/>
+    <line x1="428" y1="582" x2="430" y2="550"/>
+    <line x1="436" y1="579" x2="438" y2="545"/>
+    <line x1="444" y1="581" x2="446" y2="547"/>
+    <line x1="452" y1="578" x2="454" y2="542"/>
+    <path d="M418,548 Q416,540 420,534 Q424,528 418,522" stroke-width="1" opacity="0.8"/>
+    <path d="M430,550 Q428,542 432,536 Q436,530 430,524" stroke-width="1" opacity="0.8"/>
+    <path d="M438,545 Q436,537 440,531 Q444,525 438,519" stroke-width="1" opacity="0.8"/>
+    <ellipse cx="420" cy="532" rx="5" ry="10" fill="#8A7A40" opacity="0.6" transform="rotate(-10,420,532)"/>
+    <ellipse cx="430" cy="524" rx="5" ry="10" fill="#8A7A40" opacity="0.6" transform="rotate(5,430,524)"/>
+    <ellipse cx="438" cy="519" rx="5" ry="10" fill="#8A7A40" opacity="0.6" transform="rotate(-5,438,519)"/>
+  </g>
+
+  <!-- Lighthouse (Sanibel iconic!) -->
+  <g transform="translate(450,340)" opacity="0.55">
+    <rect x="-6" y="-100" width="12" height="100" fill="#F5EDD6" stroke="#D4C49A" stroke-width="1"/>
+    <rect x="-10" y="-105" width="20" height="8" fill="#E0CFA0"/>
+    <rect x="-5" y="-118" width="10" height="15" fill="#1B3A50"/>
+    <rect x="-8" y="-120" width="16" height="5" fill="#E0CFA0"/>
+    <rect x="-7" y="-100" width="2" height="95" fill="#D4C49A" opacity="0.4"/>
+    <rect x="2" y="-100" width="2" height="95" fill="#D4C49A" opacity="0.4"/>
+    <circle cx="0" cy="-112" r="4" fill="#FFE897" opacity="0.9"/>
+  </g>
+
+  <!-- Gentle overlay to keep text readable -->
+  <rect width="100%" height="100%" fill="rgba(21,74,87,0.08)"/>
+</svg>
+</div>
+
 <div class="app">
   <div class="header">
-    <h1>🏆 Family Randomist</h1>
-    <p>Olive · Elise · Sammy</p>
+    <div class="header-title">🌴 Sanibel Randomist</div>
+    <div class="header-sub">Olive · Elise · Sammy · Sanibel Island, FL</div>
   </div>
 
+  <!-- SCOREBOARD -->
   <div id="panel-scores" class="panel active">
     <div class="metric-grid" id="metrics-row"></div>
-    <div class="card"><div class="section-label">Leaderboard</div><div id="leaderboard"></div></div>
-    <div class="card"><div class="section-label" style="margin-bottom:8px;">Recent events</div><div class="event-log" id="recent-events"></div></div>
+    <div class="card"><div class="section-label">🏆 Leaderboard</div><div id="leaderboard"></div></div>
+    <div class="card"><div class="section-label" style="margin-bottom:8px;">🐚 Recent events</div><div class="event-log" id="recent-events"></div></div>
   </div>
 
+  <!-- LOG EVENT -->
   <div id="panel-log" class="panel">
     <div class="log-step">
       <div class="log-step-title">1 — Who did it?</div>
       <div class="who-grid" id="who-grid"></div>
     </div>
     <div class="log-step">
-      <div class="log-step-title">2 — Tap activities to add <span style="font-size:11px;font-weight:400;color:var(--text2);">(tap again to remove)</span></div>
+      <div class="log-step-title">2 — Tap activities to add <span style="font-size:11px;font-weight:400;color:var(--text3);">(tap again to remove)</span></div>
       <div id="activity-cats"></div>
     </div>
-    <div class="cart-section" id="cart-section">
+    <div class="cart-section">
       <div class="cart-section-title">3 — Confirm &amp; log <span class="cart-badge" id="cart-count">0</span></div>
       <div id="cart-items"><div class="empty-cart">No activities selected yet</div></div>
-      <input class="note-input" type="text" id="evt-note" placeholder="Optional note for all" />
+      <input class="note-input" type="text" id="evt-note" placeholder="Optional note for all"/>
       <button class="btn-primary" id="log-btn" onclick="addEvents()" disabled>Log all events ✓</button>
     </div>
     <div class="card">
@@ -140,10 +516,11 @@
     </div>
   </div>
 
+  <!-- BADGES -->
   <div id="panel-badges" class="panel">
     <div class="card" style="margin-bottom:10px;">
       <div class="section-label" style="margin-bottom:2px;">All badges</div>
-      <div style="font-size:12px;color:var(--text2);margin-bottom:12px;">Green = earned · Grey = not yet unlocked</div>
+      <div style="font-size:12px;color:var(--text3);margin-bottom:12px;">Green = earned · Grey = not yet unlocked</div>
       <div id="badge-list"></div>
     </div>
     <div class="card">
@@ -153,14 +530,16 @@
     </div>
   </div>
 
+  <!-- TEXT FAMILY -->
   <div id="panel-text" class="panel">
     <div class="card"><div class="section-label" style="margin-bottom:8px;">Daily score update</div><div class="text-preview" id="score-preview"></div><button class="btn-secondary" onclick="copyText(buildScoreText())">Copy score text</button></div>
     <div class="card"><div class="section-label" style="margin-bottom:8px;">Badge text for kids</div><div class="text-preview" id="badge-preview2"></div><button class="btn-secondary" onclick="copyText(buildBadgeText())">Copy badge text</button></div>
   </div>
 
+  <!-- RULES -->
   <div id="panel-rules" class="panel">
     <div class="prize-card"><div class="prize-title">💰 Grand Prize</div><div class="prize-desc">Most total points at end of the week wins <strong>$100</strong>.</div></div>
-    <div class="prize-card"><div class="prize-title">⭐ Daily Prize</div><div class="prize-desc">Earn <strong>50+ points in a single day</strong> to qualify for <strong>$50</strong> at week's end. You may only win one award.</div></div>
+    <div class="prize-card"><div class="prize-title">⭐ Daily Prize</div><div class="prize-desc">Earn <strong>50+ points in a single day</strong> to qualify for <strong>$50</strong> at week's end. One award only.</div></div>
     <div class="card">
       <div class="section-label" style="margin-bottom:4px;">Ground Rules</div>
       <div class="rule-item"><div class="rule-num">1</div><div class="rule-text"><strong>Witnesses required.</strong> At least 2 witnesses or 1 parent to earn points.</div></div>
@@ -172,6 +551,7 @@
     <div class="card"><div class="section-label" style="margin-bottom:8px;">Full activity list</div><div id="rules-act-list"></div></div>
   </div>
 
+  <!-- FRIDGE CHART -->
   <div id="panel-print" class="panel">
     <div class="card" style="margin-bottom:10px;">
       <div style="font-size:13px;color:var(--text2);margin-bottom:10px;">Use your browser's Print / Share → Print for the fridge.</div>
@@ -180,7 +560,7 @@
     <div class="card">
       <div class="print-wrap"><table class="print-table"><thead><tr id="print-header"></tr></thead><tbody id="print-body"></tbody></table></div>
       <div class="rules-print">
-        <div class="rules-print-title">📋 Ground Rules</div>
+        <div class="rules-print-title">🌴 Sanibel Randomist — Ground Rules</div>
         <div class="rules-print-list">
           💰 Most total points = $100 grand prize at end of week<br>
           ⭐ 50+ points in a day = $50 daily prize (one award only)<br>
@@ -201,10 +581,11 @@
     <button class="nav-btn" id="nav-print" onclick="switchTab('print',this)"><span class="nav-icon">📋</span>Chart</button>
   </nav>
 </div>
+
 <div class="toast" id="toast"></div>
 
 <script>
-const CATEGORIES = [
+const CATEGORIES=[
   {id:'beach',label:'Beach',icon:'🏖️',bc:'beach-b',activities:[
     {id:'b1',name:'Spend 30 minutes waist down in the water',pts:15},
     {id:'b2',name:'Build a sandcastle (judged)',pts:10},
@@ -251,60 +632,46 @@ const CATEGORIES = [
   ]},
 ];
 
-const MEMBERS = [
+const MEMBERS=[
   {id:3,name:'Olive',color:'#FAC775',tc:'#633806',sc:'#854F0B'},
   {id:4,name:'Elise',color:'#B5D4F4',tc:'#0C447C',sc:'#185FA5'},
   {id:5,name:'Sammy',color:'#9FE1CB',tc:'#085041',sc:'#0F6E56'},
 ];
 
-// Helper: safe count of events matching member + activity
-function evCount(events, memberId, actId) {
-  if (!Array.isArray(events)) return 0;
-  return events.filter(e => e && e.mid === memberId && e.aid === actId).length;
-}
+function evCount(events,mid,aid){if(!Array.isArray(events))return 0;return events.filter(e=>e&&e.mid===mid&&e.aid===aid).length;}
+function ptsOnDay(events,mid,dateStr){if(!Array.isArray(events))return 0;return events.filter(e=>e&&e.mid===mid&&new Date(e.ts).toDateString()===dateStr).reduce((s,e)=>s+(e.pts||0),0);}
 
-// Helper: total pts for member on a given date string
-function ptsOnDay(events, memberId, dateStr) {
-  if (!Array.isArray(events)) return 0;
-  return events
-    .filter(e => e && e.mid === memberId && new Date(e.ts).toDateString() === dateStr)
-    .reduce((s, e) => s + (e.pts || 0), 0);
-}
-
-const BADGES = [
-  {id:'starfish', icon:'⭐', name:'Starfish Hunter',   unlock:'Find 1 intact starfish',       check:(m,e,sc)=>evCount(e,m.id,'b5')>=1},
-  {id:'shell',    icon:'🐚', name:'Shell Champion',    unlock:'Win largest shell 2 days',     check:(m,e,sc)=>evCount(e,m.id,'b7')>=2},
-  {id:'paddle',   icon:'🏄', name:'Board Master',      unlock:'Paddle 3× total',              check:(m,e,sc)=>evCount(e,m.id,'b3')>=3},
-  {id:'waist',    icon:'🌊', name:'Water Logged',      unlock:'30 min in water 3× total',     check:(m,e,sc)=>evCount(e,m.id,'b1')>=3},
-  {id:'rocket',   icon:'🚀', name:'Rocketeer',         unlock:'Launch rockets 3× total',      check:(m,e,sc)=>evCount(e,m.id,'b8')>=3},
-  {id:'quarter',  icon:'🪙', name:'Quarter Finder',    unlock:'Pick up quarter 3× total',     check:(m,e,sc)=>evCount(e,m.id,'p4')>=3},
-  {id:'swimmer',  icon:'🏊', name:'Pool Shark',        unlock:'Win 3 pool races',             check:(m,e,sc)=>evCount(e,m.id,'p1')>=3},
-  {id:'lizard',   icon:'🦎', name:'Lizard Spotter',    unlock:'Photo 3 lizards',              check:(m,e,sc)=>evCount(e,m.id,'w1')>=3},
-  {id:'iguana',   icon:'🦖', name:'Iguana Whisperer',  unlock:'Photo 2 iguanas',              check:(m,e,sc)=>evCount(e,m.id,'w2')>=2},
-  {id:'gator',    icon:'🐊', name:'Gator Spotter',     unlock:'Photo 1 alligator',            check:(m,e,sc)=>evCount(e,m.id,'w3')>=1},
-  {id:'detective',icon:'🔍', name:'Miami Detective',   unlock:'Solve Murder in Miami',        check:(m,e,sc)=>evCount(e,m.id,'g1')>=1},
-  {id:'euchre',   icon:'🃏', name:'Euchre Champ',      unlock:'Win Euchre 2× total',          check:(m,e,sc)=>evCount(e,m.id,'g2')>=2},
-  {id:'nertz',    icon:'🎴', name:'Nertz Master',      unlock:'Win Nertz 2× total',           check:(m,e,sc)=>evCount(e,m.id,'g3')>=2},
-  {id:'foodie',   icon:'🍽️', name:'Foodie',            unlock:'Try 3 new foods',              check:(m,e,sc)=>evCount(e,m.id,'c8')>=3},
-  {id:'golfer',   icon:'⛳', name:'Pee Wee Champ',     unlock:'Win Pee Wee Golf',             check:(m,e,sc)=>evCount(e,m.id,'c9')>=1},
-  {id:'grocer',   icon:'🛒', name:'Grocery Hero',      unlock:'Grocery run 2× total',         check:(m,e,sc)=>evCount(e,m.id,'c6')>=2},
-  {id:'kind',     icon:'🤝', name:'Good Samaritan',    unlock:'Help a stranger',              check:(m,e,sc)=>evCount(e,m.id,'x5')>=1},
-  {id:'earlybird',icon:'🌅', name:'Early Bird',        unlock:'Watch the sunrise',            check:(m,e,sc)=>evCount(e,m.id,'x1')>=1},
-  {id:'angler',   icon:'🎣', name:'Angler',            unlock:'Catch a fish',                 check:(m,e,sc)=>evCount(e,m.id,'x2')>=1},
-  {id:'chef',     icon:'🍳', name:'Family Chef',       unlock:'Cook 3 meals total',           check:(m,e,sc)=>evCount(e,m.id,'c4')>=3},
-  {id:'reader',   icon:'📖', name:'Bookworm',          unlock:'Read outside 3× total',        check:(m,e,sc)=>evCount(e,m.id,'c5')>=3},
-  {id:'detox',    icon:'📵', name:'Off the Grid',      unlock:'No phone 2× total',            check:(m,e,sc)=>evCount(e,m.id,'c3')>=2},
-  {id:'photo',    icon:'📸', name:'Shot of the Trip',  unlock:'Win best photo vote',          check:(m,e,sc)=>evCount(e,m.id,'x3')>=1},
-  {id:'topscorer',icon:'🏆', name:'Top Scorer',        unlock:'Currently leading the board',  check:(m,e,sc)=>{
-    if(!sc||!sc.length)return false;
-    return sc[0].id===m.id&&sc[0].pts>0;
-  }},
-  {id:'onroll',   icon:'🔥', name:'On a Roll',         unlock:'3+ events in one day',         check:(m,e,sc)=>{
+const BADGES=[
+  {id:'starfish', icon:'⭐',name:'Starfish Hunter',  check:(m,e,sc)=>evCount(e,m.id,'b5')>=1},
+  {id:'shell',    icon:'🐚',name:'Shell Champion',   check:(m,e,sc)=>evCount(e,m.id,'b7')>=2},
+  {id:'paddle',   icon:'🏄',name:'Board Master',     check:(m,e,sc)=>evCount(e,m.id,'b3')>=3},
+  {id:'waist',    icon:'🌊',name:'Water Logged',     check:(m,e,sc)=>evCount(e,m.id,'b1')>=3},
+  {id:'rocket',   icon:'🚀',name:'Rocketeer',        check:(m,e,sc)=>evCount(e,m.id,'b8')>=3},
+  {id:'quarter',  icon:'🪙',name:'Quarter Finder',   check:(m,e,sc)=>evCount(e,m.id,'p4')>=3},
+  {id:'swimmer',  icon:'🏊',name:'Pool Shark',       check:(m,e,sc)=>evCount(e,m.id,'p1')>=3},
+  {id:'lizard',   icon:'🦎',name:'Lizard Spotter',   check:(m,e,sc)=>evCount(e,m.id,'w1')>=3},
+  {id:'iguana',   icon:'🦖',name:'Iguana Whisperer', check:(m,e,sc)=>evCount(e,m.id,'w2')>=2},
+  {id:'gator',    icon:'🐊',name:'Gator Spotter',    check:(m,e,sc)=>evCount(e,m.id,'w3')>=1},
+  {id:'detective',icon:'🔍',name:'Miami Detective',  check:(m,e,sc)=>evCount(e,m.id,'g1')>=1},
+  {id:'euchre',   icon:'🃏',name:'Euchre Champ',     check:(m,e,sc)=>evCount(e,m.id,'g2')>=2},
+  {id:'nertz',    icon:'🎴',name:'Nertz Master',     check:(m,e,sc)=>evCount(e,m.id,'g3')>=2},
+  {id:'foodie',   icon:'🍽️',name:'Foodie',           check:(m,e,sc)=>evCount(e,m.id,'c8')>=3},
+  {id:'golfer',   icon:'⛳',name:'Pee Wee Champ',    check:(m,e,sc)=>evCount(e,m.id,'c9')>=1},
+  {id:'grocer',   icon:'🛒',name:'Grocery Hero',     check:(m,e,sc)=>evCount(e,m.id,'c6')>=2},
+  {id:'kind',     icon:'🤝',name:'Good Samaritan',   check:(m,e,sc)=>evCount(e,m.id,'x5')>=1},
+  {id:'earlybird',icon:'🌅',name:'Early Bird',       check:(m,e,sc)=>evCount(e,m.id,'x1')>=1},
+  {id:'angler',   icon:'🎣',name:'Angler',           check:(m,e,sc)=>evCount(e,m.id,'x2')>=1},
+  {id:'chef',     icon:'🍳',name:'Family Chef',      check:(m,e,sc)=>evCount(e,m.id,'c4')>=3},
+  {id:'reader',   icon:'📖',name:'Bookworm',         check:(m,e,sc)=>evCount(e,m.id,'c5')>=3},
+  {id:'detox',    icon:'📵',name:'Off the Grid',     check:(m,e,sc)=>evCount(e,m.id,'c3')>=2},
+  {id:'photo',    icon:'📸',name:'Shot of the Trip', check:(m,e,sc)=>evCount(e,m.id,'x3')>=1},
+  {id:'topscorer',icon:'🏆',name:'Top Scorer',       check:(m,e,sc)=>{if(!sc||!sc.length)return false;return sc[0].id===m.id&&sc[0].pts>0;}},
+  {id:'onroll',   icon:'🔥',name:'On a Roll',        check:(m,e,sc)=>{
     if(!Array.isArray(e)||!e.length)return false;
     const days=[...new Set(e.filter(x=>x&&x.mid===m.id).map(x=>new Date(x.ts).toDateString()))];
     return days.some(d=>e.filter(x=>x&&x.mid===m.id&&new Date(x.ts).toDateString()===d).length>=3);
   }},
-  {id:'daily50',  icon:'💰', name:'Daily Prize Hero',  unlock:'50+ points in a single day',   check:(m,e,sc)=>{
+  {id:'daily50',  icon:'💰',name:'Daily Prize Hero', check:(m,e,sc)=>{
     if(!Array.isArray(e)||!e.length)return false;
     const days=[...new Set(e.filter(x=>x&&x.mid===m.id).map(x=>new Date(x.ts).toDateString()))];
     return days.some(d=>ptsOnDay(e,m.id,d)>=50);
@@ -315,15 +682,9 @@ let state={events:[]};
 let selMember=null;
 let cart=[];
 
-function buildActMap(){
-  const m={};
-  CATEGORIES.forEach(c=>c.activities.forEach(a=>{m[a.id]={...a,catLabel:c.label,bc:c.bc,catIcon:c.icon};}));
-  return m;
-}
-
+function buildActMap(){const m={};CATEGORIES.forEach(c=>c.activities.forEach(a=>{m[a.id]={...a,catLabel:c.label,bc:c.bc,catIcon:c.icon};}));return m;}
 function load(){try{const s=localStorage.getItem('randomist_v5');if(s)state=JSON.parse(s);}catch(e){}}
 function save(){localStorage.setItem('randomist_v5',JSON.stringify(state));}
-
 function deleteEvent(id){state.events=state.events.filter(e=>e.id!==id);save();initAll();showToast('Event removed');}
 
 function getScores(){
@@ -345,8 +706,7 @@ function renderEventItem(e,am,mm){
 }
 
 function initScores(){
-  const sc=getScores();
-  const tot=sc.reduce((s,m)=>s+m.pts,0);
+  const sc=getScores();const tot=sc.reduce((s,m)=>s+m.pts,0);
   const tevts=state.events.filter(e=>new Date(e.ts).toDateString()===new Date().toDateString()).length;
   document.getElementById('metrics-row').innerHTML=`
     <div class="metric"><div class="metric-label">Total pts</div><div class="metric-value">${tot}</div></div>
@@ -356,20 +716,17 @@ function initScores(){
   document.getElementById('leaderboard').innerHTML=sc.map((m,i)=>`
     <div class="member-row">
       <div class="avatar" style="background:${m.color};color:${m.tc}">${m.name.slice(0,2).toUpperCase()}</div>
-      <div style="flex:1;"><div style="font-size:14px;font-weight:600;">${m.name}${i===0&&m.pts>0?' 👑':''}</div>
-      <div style="font-size:11px;color:var(--text2);">${m.tpts>0?'+'+m.tpts+' today':'no events today'}${m.tpts>=50?' · 💰 $50 qualified!':''}</div></div>
-      <div style="font-size:17px;font-weight:600;">${m.pts}<span style="font-size:11px;color:var(--text2);font-weight:400;"> pts</span></div>
+      <div style="flex:1;"><div style="font-size:14px;font-weight:700;">${m.name}${i===0&&m.pts>0?' 👑':''}</div>
+      <div style="font-size:11px;color:var(--text3);">${m.tpts>0?'+'+m.tpts+' today':'no events today'}${m.tpts>=50?' · 💰 $50 qualified!':''}</div></div>
+      <div style="font-size:17px;font-weight:700;color:var(--ocean2);">${m.pts}<span style="font-size:11px;color:var(--text3);font-weight:400;"> pts</span></div>
     </div>`).join('');
   const am=buildActMap();const mm=Object.fromEntries(MEMBERS.map(m=>[m.id,m]));
   const recent=[...state.events].sort((a,b)=>b.ts-a.ts).slice(0,10);
-  document.getElementById('recent-events').innerHTML=recent.length
-    ?recent.map(e=>renderEventItem(e,am,mm)).join('')
-    :'<div style="font-size:13px;color:var(--text2);padding:8px 0;">No events yet!</div>';
+  document.getElementById('recent-events').innerHTML=recent.length?recent.map(e=>renderEventItem(e,am,mm)).join(''):'<div style="font-size:13px;color:var(--text3);padding:8px 0;">No events yet — hit the beach! 🌴</div>';
 }
 
 function toggleActivity(catId,actId){
-  const cat=CATEGORIES.find(c=>c.id===catId);
-  const act=cat.activities.find(a=>a.id===actId);
+  const cat=CATEGORIES.find(c=>c.id===catId);const act=cat.activities.find(a=>a.id===actId);
   const idx=cart.findIndex(x=>x.id===actId);
   if(idx>=0){cart.splice(idx,1);}else{cart.push({...act,catLabel:cat.label,bc:cat.bc,catIcon:cat.icon});}
   renderCart();renderActivityList();
@@ -389,28 +746,21 @@ function renderCart(){
       <div style="flex:1;min-width:0;"><div class="cart-item-name">${a.name}</div><div class="cart-item-cat">${a.catIcon} ${a.catLabel}</div></div>
       <button class="cart-remove" onclick="removeFromCart('${a.id}')">×</button>
     </div>`).join('')+
-    `<div style="display:flex;justify-content:flex-end;padding:8px 0 2px;font-size:13px;font-weight:600;color:var(--success);">Total: +${totalPts} pts</div>`;
+    `<div style="display:flex;justify-content:flex-end;padding:8px 0 2px;font-size:13px;font-weight:700;color:var(--ocean2);">Total: +${totalPts} pts</div>`;
 }
 
 function renderActivityList(){
   const cartIds=new Set(cart.map(x=>x.id));
-  CATEGORIES.forEach(cat=>{
-    cat.activities.forEach(a=>{
-      const el=document.getElementById('arow-'+a.id);if(!el)return;
-      if(cartIds.has(a.id)){
-        el.classList.add('in-cart');
-        if(!el.querySelector('.cart-check')){const d=document.createElement('div');d.className='cart-check';d.textContent='✓';el.appendChild(d);}
-      }else{
-        el.classList.remove('in-cart');
-        const chk=el.querySelector('.cart-check');if(chk)chk.remove();
-      }
-    });
-  });
+  CATEGORIES.forEach(cat=>{cat.activities.forEach(a=>{
+    const el=document.getElementById('arow-'+a.id);if(!el)return;
+    if(cartIds.has(a.id)){el.classList.add('in-cart');if(!el.querySelector('.cart-check')){const d=document.createElement('div');d.className='cart-check';d.textContent='✓';el.appendChild(d);}}
+    else{el.classList.remove('in-cart');const chk=el.querySelector('.cart-check');if(chk)chk.remove();}
+  });});
 }
 
 function initLog(){
   document.getElementById('who-grid').innerHTML=MEMBERS.map(m=>`
-    <button class="who-btn${selMember===m.id?' selected':''}" style="${selMember===m.id?`border-color:${m.sc};color:${m.sc};`:''}" onclick="selMem(${m.id})">
+    <button class="who-btn${selMember===m.id?' selected':''}" style="${selMember===m.id?`border-color:${m.sc};`:''}" onclick="selMem(${m.id})">
       <div class="who-dot" style="background:${m.color};border:1.5px solid ${m.sc};"></div>${m.name}
     </button>`).join('');
   const cartIds=new Set(cart.map(x=>x.id));
@@ -436,7 +786,7 @@ function selMem(id){
   document.querySelectorAll('.who-btn').forEach((b,i)=>{
     const m=MEMBERS[i];if(!m)return;
     b.classList.toggle('selected',m.id===id);
-    b.style.borderColor=m.id===id?m.sc:'';b.style.color=m.id===id?m.sc:'';
+    b.style.borderColor=m.id===id?m.sc:'';
   });
   document.getElementById('log-btn').disabled=!(selMember&&cart.length>0);
 }
@@ -445,8 +795,7 @@ function toggleCat(id){document.getElementById('cb-'+id).classList.toggle('open'
 
 function addEvents(){
   if(!selMember||!cart.length)return;
-  const note=document.getElementById('evt-note').value.trim();
-  const now=Date.now();
+  const note=document.getElementById('evt-note').value.trim();const now=Date.now();
   cart.forEach((a,i)=>{state.events.push({id:now+i,mid:selMember,aid:a.id,aname:a.name,pts:a.pts,note,ts:now+i});});
   const totalPts=cart.reduce((s,a)=>s+a.pts,0);const count=cart.length;
   document.getElementById('evt-note').value='';cart=[];
@@ -456,73 +805,56 @@ function addEvents(){
 function renderToday(){
   const am=buildActMap();const mm=Object.fromEntries(MEMBERS.map(m=>[m.id,m]));
   const today=[...state.events].filter(e=>new Date(e.ts).toDateString()===new Date().toDateString()).sort((a,b)=>b.ts-a.ts);
-  document.getElementById('today-events').innerHTML=today.length
-    ?today.map(e=>renderEventItem(e,am,mm)).join('')
-    :'<div style="font-size:13px;color:var(--text2);padding:8px 0;">Nothing logged today yet.</div>';
+  document.getElementById('today-events').innerHTML=today.length?today.map(e=>renderEventItem(e,am,mm)).join(''):'<div style="font-size:13px;color:var(--text3);padding:8px 0;">Nothing logged today yet.</div>';
 }
 
 function initBadges(){
   const sc=getScores();
-  // Render ALL badges for each member, clearly earned vs locked
   document.getElementById('badge-list').innerHTML=MEMBERS.map(m=>{
     let earnedCount=0;
     const pills=BADGES.map(b=>{
-      let earned=false;
-      try{earned=b.check(m,state.events,sc);}catch(err){earned=false;}
+      let earned=false;try{earned=b.check(m,state.events,sc);}catch(err){earned=false;}
       if(earned)earnedCount++;
-      return`<div class="badge-pill ${earned?'badge-earned':'badge-locked'}" title="${b.unlock}">
-        <span>${b.icon}</span><span>${b.name}</span>
-      </div>`;
+      return`<div class="badge-pill ${earned?'badge-earned':'badge-locked'}">${b.icon} ${b.name}</div>`;
     }).join('');
     return`<div class="badge-member-block">
       <div class="badge-member-header">
         <div class="avatar" style="background:${m.color};color:${m.tc}">${m.name.slice(0,2).toUpperCase()}</div>
-        <span style="font-weight:600;font-size:14px;">${m.name}</span>
+        <span style="font-weight:700;font-size:14px;">${m.name}</span>
         <span class="badge-progress">${earnedCount} of ${BADGES.length} earned</span>
       </div>
       <div class="badge-grid-wrap">${pills}</div>
     </div>`;
-  }).join('<div style="height:1px;background:var(--border);margin:12px 0;"></div>');
+  }).join('<div style="height:1px;background:var(--sand3);margin:12px 0;"></div>');
   document.getElementById('badge-preview').textContent=buildBadgeText();
 }
 
 function buildBadgeText(){
-  const sc=getScores();
-  const today=new Date().toLocaleDateString('en-US',{month:'short',day:'numeric'});
-  let lines=[`🏅 Family Randomist — Badge Update (${today})`,''];
-  MEMBERS.forEach(m=>{
-    const earned=BADGES.filter(b=>{try{return b.check(m,state.events,sc);}catch(e){return false;}});
-    if(earned.length>0)lines.push(`${m.name}: ${earned.map(b=>`${b.icon} ${b.name}`).join(', ')}`);
-  });
-  if(lines.length===2)lines.push('No badges yet — get out there!');
+  const sc=getScores();const today=new Date().toLocaleDateString('en-US',{month:'short',day:'numeric'});
+  let lines=[`🌴 Sanibel Randomist — Badge Update (${today})`,''];
+  MEMBERS.forEach(m=>{const earned=BADGES.filter(b=>{try{return b.check(m,state.events,sc);}catch(e){return false;}});if(earned.length>0)lines.push(`${m.name}: ${earned.map(b=>`${b.icon} ${b.name}`).join(', ')}`);});
+  if(lines.length===2)lines.push('No badges yet — get out there! 🐚');
   return lines.join('\n');
 }
 
 function buildScoreText(){
-  const sc=getScores();
-  const today=new Date().toLocaleDateString('en-US',{weekday:'short',month:'short',day:'numeric'});
+  const sc=getScores();const today=new Date().toLocaleDateString('en-US',{weekday:'short',month:'short',day:'numeric'});
   const am=buildActMap();const mm=Object.fromEntries(MEMBERS.map(m=>[m.id,m]));
   const tevts=state.events.filter(e=>new Date(e.ts).toDateString()===new Date().toDateString());
-  let lines=[`📊 Family Randomist — ${today}`,'','🏆 Standings:'];
+  let lines=[`🌴 Sanibel Randomist — ${today}`,'','🏆 Standings:'];
   sc.forEach((m,i)=>lines.push(`${i===0?'👑':i===1?'🥈':'🥉'} ${m.name}: ${m.pts} pts${m.tpts>0?' (+'+m.tpts+' today)':''}${m.tpts>=50?' 💰':''}`));
-  if(tevts.length>0){
-    lines.push('','📅 Today\'s highlights:');
-    tevts.slice(-6).forEach(e=>{const act=am[e.aid];lines.push(`• ${mm[e.mid]?.name||'?'} — ${act?.name||e.aname||'?'}${e.note?' ('+e.note+')':''} +${e.pts}pts`);});
-  }
+  if(tevts.length>0){lines.push('','📅 Today\'s highlights:');tevts.slice(-6).forEach(e=>{const act=am[e.aid];lines.push(`• ${mm[e.mid]?.name||'?'} — ${act?.name||e.aname||'?'}${e.note?' ('+e.note+')':''} +${e.pts}pts`);});}
   return lines.join('\n');
 }
 
-function initText(){
-  document.getElementById('score-preview').textContent=buildScoreText();
-  document.getElementById('badge-preview2').textContent=buildBadgeText();
-}
+function initText(){document.getElementById('score-preview').textContent=buildScoreText();document.getElementById('badge-preview2').textContent=buildBadgeText();}
 
 function initRules(){
   document.getElementById('rules-act-list').innerHTML=CATEGORIES.map(cat=>`
     <div style="margin-bottom:12px;">
-      <div style="font-size:12px;font-weight:700;color:var(--text2);text-transform:uppercase;letter-spacing:0.05em;margin-bottom:6px;">${cat.icon} ${cat.label}</div>
+      <div style="font-size:12px;font-weight:700;color:var(--ocean2);text-transform:uppercase;letter-spacing:0.05em;margin-bottom:6px;">${cat.icon} ${cat.label}</div>
       ${cat.activities.map(a=>`
-        <div style="display:flex;align-items:center;gap:8px;padding:5px 0;border-bottom:0.5px solid var(--border);">
+        <div style="display:flex;align-items:center;gap:8px;padding:5px 0;border-bottom:1px dashed var(--sand3);">
           <span class="pts-badge ${cat.bc}" style="min-width:44px;">+${a.pts}</span>
           <span style="font-size:12px;flex:1;">${a.name}${a.rep?' ↻':''}</span>
         </div>`).join('')}
@@ -540,25 +872,15 @@ function initPrint(){
       rows+=`<tr><td>${a.name}${a.rep?' ↻':''}</td><td style="text-align:center;font-weight:600;">+${a.pts}</td>${cells}</tr>`;
     });
   });
-  const brow=sc.map(m=>{
-    const earned=BADGES.filter(b=>{try{return b.check(m,state.events,sc);}catch(e){return false;}});
-    return`<td style="text-align:center;font-size:13px;">${earned.map(b=>b.icon).join('')||'—'}</td>`;
-  }).join('');
+  const brow=sc.map(m=>{const earned=BADGES.filter(b=>{try{return b.check(m,state.events,sc);}catch(e){return false;}});return`<td style="text-align:center;font-size:13px;">${earned.map(b=>b.icon).join('')||'—'}</td>`;}).join('');
   rows+=`<tr class="total-row"><td colspan="2">Badges</td>${brow}</tr>`;
   rows+=`<tr class="total-row"><td colspan="2">Total</td>${sc.map(m=>`<td style="text-align:center;">${m.pts} pts</td>`).join('')}</tr>`;
   document.getElementById('print-body').innerHTML=rows;
 }
 
-function copyText(txt){
-  navigator.clipboard.writeText(txt).then(()=>showToast('Copied!')).catch(()=>{
-    const ta=document.createElement('textarea');ta.value=txt;document.body.appendChild(ta);ta.select();document.execCommand('copy');document.body.removeChild(ta);showToast('Copied!');
-  });
-}
+function copyText(txt){navigator.clipboard.writeText(txt).then(()=>showToast('Copied!')).catch(()=>{const ta=document.createElement('textarea');ta.value=txt;document.body.appendChild(ta);ta.select();document.execCommand('copy');document.body.removeChild(ta);showToast('Copied!');});}
 
-function showToast(msg){
-  const t=document.getElementById('toast');t.textContent=msg;t.classList.add('show');
-  setTimeout(()=>t.classList.remove('show'),2500);
-}
+function showToast(msg){const t=document.getElementById('toast');t.textContent=msg;t.classList.add('show');setTimeout(()=>t.classList.remove('show'),2500);}
 
 let activeTab='scores';
 function switchTab(tab,btn){
