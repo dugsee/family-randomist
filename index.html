@@ -8,578 +8,574 @@
 <meta name="apple-mobile-web-app-title" content="Randomist" />
 <title>Family Randomist Tracker</title>
 <style>
-  :root {
-    --bg: #ffffff;
-    --bg2: #f5f5f4;
-    --bg3: #eeede9;
-    --text: #1a1a18;
-    --text2: #6b6b67;
-    --text3: #9b9b96;
-    --border: rgba(0,0,0,0.12);
-    --border2: rgba(0,0,0,0.22);
-    --radius: 10px;
-    --radius-lg: 14px;
-    --success: #27500a;
-    --success-bg: #eaf3de;
+  :root{--bg:#ffffff;--bg2:#f5f5f4;--bg3:#eeede9;--text:#1a1a18;--text2:#6b6b67;--text3:#9b9b96;--border:rgba(0,0,0,0.12);--border2:rgba(0,0,0,0.22);--radius:10px;--radius-lg:14px;--success:#27500a;--success-bg:#eaf3de;--gold:#854F0B;--gold-bg:#FAEEDA;}
+  @media(prefers-color-scheme:dark){:root{--bg:#1c1c1e;--bg2:#2c2c2e;--bg3:#3a3a3c;--text:#f2f2f0;--text2:#aeaead;--text3:#6e6e6a;--border:rgba(255,255,255,0.12);--border2:rgba(255,255,255,0.22);--success:#c0dd97;--success-bg:#27500a;--gold:#FAC775;--gold-bg:#3a2e1a;}}
+  *{box-sizing:border-box;margin:0;padding:0;-webkit-tap-highlight-color:transparent;}
+  html,body{height:100%;font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;background:var(--bg3);color:var(--text);}
+  .app{max-width:480px;margin:0 auto;background:var(--bg3);min-height:100vh;padding-bottom:80px;}
+  .header{background:var(--bg);border-bottom:0.5px solid var(--border);padding:16px 16px 12px;position:sticky;top:0;z-index:10;}
+  .header h1{font-size:18px;font-weight:600;}.header p{font-size:12px;color:var(--text2);margin-top:2px;}
+  .bottom-nav{position:fixed;bottom:0;left:50%;transform:translateX(-50%);width:100%;max-width:480px;background:var(--bg);border-top:0.5px solid var(--border);display:flex;z-index:20;padding-bottom:env(safe-area-inset-bottom);}
+  .nav-btn{flex:1;display:flex;flex-direction:column;align-items:center;gap:3px;padding:10px 2px 8px;border:none;background:none;color:var(--text3);font-size:9px;cursor:pointer;transition:color 0.15s;}
+  .nav-btn.active{color:#185FA5;}.nav-icon{font-size:19px;line-height:1;}
+  .panel{display:none;padding:12px;}.panel.active{display:block;}
+  .card{background:var(--bg);border-radius:var(--radius-lg);padding:14px 16px;margin-bottom:10px;}
+  .section-label{font-size:11px;font-weight:600;color:var(--text2);text-transform:uppercase;letter-spacing:0.06em;margin-bottom:10px;}
+  .metric-grid{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:8px;margin-bottom:10px;}
+  .metric{background:var(--bg);border-radius:var(--radius);padding:10px 8px;text-align:center;}
+  .metric-label{font-size:10px;color:var(--text2);margin-bottom:3px;}.metric-value{font-size:20px;font-weight:600;}
+  .member-row{display:flex;align-items:center;gap:10px;padding:10px 0;border-bottom:0.5px solid var(--border);}
+  .member-row:last-child{border-bottom:none;}
+  .avatar{width:34px;height:34px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:12px;font-weight:600;flex-shrink:0;}
+  .log-step{background:var(--bg);border-radius:var(--radius-lg);padding:14px 16px;margin-bottom:10px;}
+  .log-step-title{font-size:13px;font-weight:600;margin-bottom:12px;}
+  .who-grid{display:flex;flex-wrap:wrap;gap:8px;}
+  .who-btn{display:flex;align-items:center;gap:6px;padding:7px 14px;border-radius:999px;border:1px solid var(--border2);cursor:pointer;font-size:13px;background:var(--bg2);color:var(--text);transition:all 0.15s;}
+  .who-btn.selected{border-width:2px;font-weight:600;}
+  .who-dot{width:10px;height:10px;border-radius:50%;flex-shrink:0;}
+  .cat-header{display:flex;align-items:center;gap:10px;padding:12px 0 8px;cursor:pointer;user-select:none;}
+  .cat-label{font-size:14px;font-weight:600;flex:1;}
+  .cat-chevron{font-size:12px;color:var(--text3);transition:transform 0.2s;}.cat-chevron.open{transform:rotate(90deg);}
+  .cat-body{display:none;}.cat-body.open{display:block;}
+  .activity-row{display:flex;align-items:flex-start;gap:10px;padding:10px 0;border-bottom:0.5px solid var(--border);cursor:pointer;border-radius:6px;transition:background 0.1s;}
+  .activity-row:last-child{border-bottom:none;}.activity-row:active{background:var(--bg2);}.activity-row.in-cart{background:var(--success-bg);}
+  .pts-badge{font-size:11px;font-weight:600;padding:3px 8px;border-radius:999px;white-space:nowrap;min-width:48px;text-align:center;flex-shrink:0;margin-top:1px;}
+  .beach-b{background:#E6F1FB;color:#185FA5;}.pool-b{background:#E1F5EE;color:#0F6E56;}.chall-b{background:#FAEEDA;color:#854F0B;}.games-b{background:#EEEDFE;color:#534AB7;}.bonus-b{background:#FBEAF0;color:#993556;}.wild-b{background:#FCEBEB;color:#A32D2D;}
+  .act-name{font-size:13px;font-weight:500;line-height:1.3;}.act-note{font-size:11px;color:var(--text2);margin-top:2px;}
+  .rep-tag{font-size:10px;background:#EEEDFE;color:#534AB7;padding:1px 6px;border-radius:999px;margin-left:5px;vertical-align:middle;}
+  .cart-check{width:20px;height:20px;border-radius:50%;background:#27500a;display:flex;align-items:center;justify-content:center;font-size:11px;color:#eaf3de;flex-shrink:0;margin-top:2px;}
+  .cart-section{background:var(--bg);border-radius:var(--radius-lg);padding:14px 16px;margin-bottom:10px;}
+  .cart-section-title{font-size:13px;font-weight:600;margin-bottom:10px;display:flex;align-items:center;gap:8px;}
+  .cart-badge{background:#185FA5;color:white;border-radius:999px;font-size:11px;font-weight:700;padding:1px 8px;}
+  .cart-item{display:flex;align-items:center;gap:10px;padding:8px 0;border-bottom:0.5px solid var(--border);}
+  .cart-item:last-child{border-bottom:none;}
+  .cart-item-name{font-size:13px;font-weight:500;line-height:1.3;}.cart-item-cat{font-size:11px;color:var(--text2);}
+  .cart-remove{width:28px;height:28px;border-radius:50%;background:var(--bg2);border:0.5px solid var(--border2);color:var(--text3);font-size:16px;cursor:pointer;display:flex;align-items:center;justify-content:center;flex-shrink:0;transition:background 0.15s,color 0.15s;}
+  .cart-remove:hover{background:#FCEBEB;color:#A32D2D;border-color:#A32D2D;}.cart-remove:active{transform:scale(0.92);}
+  .note-input{width:100%;font-size:14px;padding:10px 12px;border:1px solid var(--border2);border-radius:var(--radius);background:var(--bg);color:var(--text);margin-bottom:10px;}
+  .note-input:focus{outline:none;border-color:#185FA5;}
+  .btn-primary{width:100%;background:var(--text);color:var(--bg);border:none;border-radius:var(--radius);padding:13px;font-size:15px;font-weight:600;cursor:pointer;}
+  .btn-primary:active{opacity:0.8;}.btn-primary:disabled{opacity:0.35;cursor:default;}
+  .event-log{max-height:260px;overflow-y:auto;}
+  .event-item{display:flex;align-items:center;gap:8px;padding:8px 0;border-bottom:0.5px solid var(--border);font-size:13px;}
+  .event-item:last-child{border-bottom:none;}
+  .event-pts{font-weight:600;color:var(--success);min-width:36px;text-align:right;flex-shrink:0;}
+  .event-name{font-weight:500;}.event-detail{font-size:12px;color:var(--text2);}
+  .delete-btn{width:26px;height:26px;border-radius:50%;background:var(--bg2);border:0.5px solid var(--border2);color:var(--text3);font-size:14px;cursor:pointer;display:flex;align-items:center;justify-content:center;flex-shrink:0;transition:background 0.15s,color 0.15s;}
+  .delete-btn:hover{background:#FCEBEB;color:#A32D2D;border-color:#A32D2D;}.delete-btn:active{transform:scale(0.92);}
+  /* Badge grid — always shows all badges */
+  .badge-member-block{margin-bottom:20px;}
+  .badge-member-header{display:flex;align-items:center;gap:8px;margin-bottom:10px;}
+  .badge-progress{font-size:12px;color:var(--text2);}
+  .badge-grid-wrap{display:flex;flex-wrap:wrap;gap:6px;}
+  .badge-pill{display:inline-flex;align-items:center;gap:4px;padding:5px 11px;border-radius:999px;font-size:12px;font-weight:500;}
+  .badge-earned{background:var(--success-bg);color:var(--success);border:1px solid rgba(39,80,10,0.2);}
+  .badge-locked{background:var(--bg2);color:var(--text3);border:0.5px solid var(--border);}
+  .badge-desc{font-size:10px;margin-top:1px;opacity:0.75;}
+  /* Expandable badge details */
+  .badge-pill-wrap{display:inline-flex;flex-direction:column;align-items:center;margin:3px;}
+  .text-preview{background:var(--bg2);border-radius:var(--radius);padding:14px;font-size:13px;line-height:1.65;color:var(--text);white-space:pre-wrap;font-family:'Menlo','Courier New',monospace;}
+  .btn-secondary{width:100%;background:none;color:var(--text);border:1px solid var(--border2);border-radius:var(--radius);padding:12px;font-size:14px;font-weight:500;cursor:pointer;margin-top:8px;}
+  .btn-secondary:active{background:var(--bg2);}
+  .prize-card{background:var(--gold-bg);border-radius:var(--radius-lg);padding:16px;margin-bottom:10px;border:1px solid rgba(133,79,11,0.2);}
+  .prize-title{font-size:13px;font-weight:700;color:var(--gold);margin-bottom:4px;}.prize-desc{font-size:13px;line-height:1.5;}
+  .rule-item{display:flex;align-items:flex-start;gap:10px;padding:12px 0;border-bottom:0.5px solid var(--border);}
+  .rule-item:last-child{border-bottom:none;}
+  .rule-num{width:24px;height:24px;border-radius:50%;background:var(--bg2);display:flex;align-items:center;justify-content:center;font-size:12px;font-weight:700;color:var(--text2);flex-shrink:0;margin-top:1px;}
+  .rule-text{font-size:13px;line-height:1.5;flex:1;}.rule-text strong{font-weight:600;}
+  .print-wrap{overflow-x:auto;}
+  .print-table{width:100%;border-collapse:collapse;font-size:11px;}
+  .print-table th{background:var(--bg2);padding:7px 8px;text-align:left;border:0.5px solid var(--border);font-weight:600;}
+  .print-table td{padding:6px 8px;border:0.5px solid var(--border);}
+  .print-table .cat-row td{background:var(--bg3);font-weight:600;font-size:12px;}
+  .print-table .total-row td{font-weight:600;background:var(--bg2);}
+  .rules-print{margin-top:16px;padding-top:14px;border-top:1px solid var(--border);}
+  .rules-print-title{font-size:13px;font-weight:700;margin-bottom:8px;}
+  .rules-print-list{font-size:11px;line-height:1.8;}
+  @media print{
+    body{background:white;color:black;}
+    .bottom-nav,.header,.panel:not(.active){display:none!important;}
+    .panel.active{display:block!important;padding:20px;}.app{max-width:100%;}
+    .print-table th,.print-table td{border:1px solid #ccc;color:black;background:white!important;}
+    .print-table .cat-row td{background:#f0f0f0!important;}.print-table .total-row td{background:#f5f5f5!important;}
+    .rules-print{border-top:1px solid #ccc;}
   }
-  @media (prefers-color-scheme: dark) {
-    :root {
-      --bg: #1c1c1e;
-      --bg2: #2c2c2e;
-      --bg3: #3a3a3c;
-      --text: #f2f2f0;
-      --text2: #aeaead;
-      --text3: #6e6e6a;
-      --border: rgba(255,255,255,0.12);
-      --border2: rgba(255,255,255,0.22);
-      --success: #c0dd97;
-      --success-bg: #27500a;
-    }
-  }
-  * { box-sizing: border-box; margin: 0; padding: 0; -webkit-tap-highlight-color: transparent; }
-  html, body { height: 100%; font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif; background: var(--bg3); color: var(--text); }
-  .app { max-width: 480px; margin: 0 auto; background: var(--bg3); min-height: 100vh; padding-bottom: 80px; }
-
-  /* Header */
-  .header { background: var(--bg); border-bottom: 0.5px solid var(--border); padding: 16px 16px 12px; position: sticky; top: 0; z-index: 10; }
-  .header h1 { font-size: 18px; font-weight: 600; color: var(--text); }
-  .header p { font-size: 12px; color: var(--text2); margin-top: 2px; }
-
-  /* Bottom nav */
-  .bottom-nav { position: fixed; bottom: 0; left: 50%; transform: translateX(-50%); width: 100%; max-width: 480px; background: var(--bg); border-top: 0.5px solid var(--border); display: flex; z-index: 20; padding-bottom: env(safe-area-inset-bottom); }
-  .nav-btn { flex: 1; display: flex; flex-direction: column; align-items: center; gap: 3px; padding: 10px 4px 8px; border: none; background: none; color: var(--text3); font-size: 10px; cursor: pointer; transition: color 0.15s; }
-  .nav-btn.active { color: #185FA5; }
-  .nav-icon { font-size: 20px; line-height: 1; }
-
-  /* Panels */
-  .panel { display: none; padding: 12px; }
-  .panel.active { display: block; }
-
-  /* Cards */
-  .card { background: var(--bg); border-radius: var(--radius-lg); padding: 14px 16px; margin-bottom: 10px; }
-  .section-label { font-size: 11px; font-weight: 600; color: var(--text2); text-transform: uppercase; letter-spacing: 0.06em; margin-bottom: 10px; }
-
-  /* Metrics */
-  .metric-grid { display: grid; grid-template-columns: repeat(4, minmax(0,1fr)); gap: 8px; margin-bottom: 10px; }
-  .metric { background: var(--bg); border-radius: var(--radius); padding: 10px 8px; text-align: center; }
-  .metric-label { font-size: 10px; color: var(--text2); margin-bottom: 3px; }
-  .metric-value { font-size: 20px; font-weight: 600; color: var(--text); }
-
-  /* Leaderboard */
-  .member-row { display: flex; align-items: center; gap: 10px; padding: 10px 0; border-bottom: 0.5px solid var(--border); }
-  .member-row:last-child { border-bottom: none; }
-  .avatar { width: 34px; height: 34px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 12px; font-weight: 600; flex-shrink: 0; }
-  .member-pts { font-size: 17px; font-weight: 600; }
-
-  /* Log Event */
-  .log-step { background: var(--bg); border-radius: var(--radius-lg); padding: 14px 16px; margin-bottom: 10px; }
-  .log-step-title { font-size: 13px; font-weight: 600; color: var(--text); margin-bottom: 12px; }
-  .who-grid { display: flex; flex-wrap: wrap; gap: 8px; }
-  .who-btn { display: flex; align-items: center; gap: 6px; padding: 7px 14px; border-radius: 999px; border: 1px solid var(--border2); cursor: pointer; font-size: 13px; background: var(--bg2); color: var(--text); transition: all 0.15s; }
-  .who-btn.selected { border-width: 2px; font-weight: 600; }
-  .who-dot { width: 10px; height: 10px; border-radius: 50%; flex-shrink: 0; }
-
-  /* Category accordion */
-  .cat-header { display: flex; align-items: center; gap: 10px; padding: 12px 0 8px; cursor: pointer; user-select: none; }
-  .cat-label { font-size: 14px; font-weight: 600; flex: 1; }
-  .cat-count { font-size: 12px; color: var(--text2); }
-  .cat-chevron { font-size: 12px; color: var(--text3); transition: transform 0.2s; }
-  .cat-chevron.open { transform: rotate(90deg); }
-  .cat-body { display: none; }
-  .cat-body.open { display: block; }
-  .activity-row { display: flex; align-items: flex-start; gap: 10px; padding: 10px 0; border-bottom: 0.5px solid var(--border); cursor: pointer; border-radius: 6px; transition: background 0.1s; }
-  .activity-row:last-child { border-bottom: none; }
-  .activity-row:active { background: var(--bg2); }
-  .activity-row.selected-act { background: var(--bg2); }
-  .pts-badge { font-size: 11px; font-weight: 600; padding: 3px 8px; border-radius: 999px; white-space: nowrap; min-width: 52px; text-align: center; flex-shrink: 0; margin-top: 1px; }
-  .beach-b  { background: #E6F1FB; color: #185FA5; }
-  .pool-b   { background: #E1F5EE; color: #0F6E56; }
-  .chall-b  { background: #FAEEDA; color: #854F0B; }
-  .games-b  { background: #EEEDFE; color: #534AB7; }
-  .bonus-b  { background: #FBEAF0; color: #993556; }
-  .act-name { font-size: 13px; font-weight: 500; line-height: 1.3; }
-  .act-note { font-size: 11px; color: var(--text2); margin-top: 2px; }
-  .rep-tag  { font-size: 10px; background: #EEEDFE; color: #534AB7; padding: 1px 6px; border-radius: 999px; margin-left: 5px; vertical-align: middle; }
-
-  /* Confirm step */
-  .confirm-box { background: var(--bg2); border-radius: var(--radius); padding: 12px; margin-bottom: 10px; display: flex; align-items: center; gap: 10px; }
-  .note-input { width: 100%; font-size: 14px; padding: 10px 12px; border: 1px solid var(--border2); border-radius: var(--radius); background: var(--bg); color: var(--text); margin-bottom: 10px; }
-  .note-input:focus { outline: none; border-color: #185FA5; }
-  .btn-primary { width: 100%; background: var(--text); color: var(--bg); border: none; border-radius: var(--radius); padding: 13px; font-size: 15px; font-weight: 600; cursor: pointer; }
-  .btn-primary:active { opacity: 0.8; }
-
-  /* Event log */
-  .event-log { max-height: 200px; overflow-y: auto; }
-  .event-item { display: flex; align-items: flex-start; gap: 8px; padding: 8px 0; border-bottom: 0.5px solid var(--border); font-size: 13px; }
-  .event-item:last-child { border-bottom: none; }
-  .event-pts { font-weight: 600; color: var(--success); min-width: 36px; text-align: right; margin-left: auto; flex-shrink: 0; }
-  .event-name { font-weight: 500; }
-  .event-detail { font-size: 12px; color: var(--text2); }
-
-  /* Badges */
-  .badge-pill { display: inline-flex; align-items: center; gap: 4px; padding: 4px 10px; border-radius: 999px; font-size: 12px; font-weight: 500; margin: 3px; }
-  .badge-earned { background: var(--success-bg); color: var(--success); }
-  .badge-locked { background: var(--bg2); color: var(--text3); border: 0.5px solid var(--border); }
-
-  /* Text */
-  .text-preview { background: var(--bg2); border-radius: var(--radius); padding: 14px; font-size: 13px; line-height: 1.65; color: var(--text); white-space: pre-wrap; font-family: 'Menlo', 'Courier New', monospace; }
-  .btn-secondary { width: 100%; background: none; color: var(--text); border: 1px solid var(--border2); border-radius: var(--radius); padding: 12px; font-size: 14px; font-weight: 500; cursor: pointer; margin-top: 8px; }
-  .btn-secondary:active { background: var(--bg2); }
-
-  /* Print chart */
-  .print-wrap { overflow-x: auto; }
-  .print-table { width: 100%; border-collapse: collapse; font-size: 11px; }
-  .print-table th { background: var(--bg2); padding: 7px 8px; text-align: left; border: 0.5px solid var(--border); font-weight: 600; font-size: 11px; }
-  .print-table td { padding: 6px 8px; border: 0.5px solid var(--border); }
-  .print-table .cat-row td { background: var(--bg3); font-weight: 600; font-size: 12px; }
-  .print-table .total-row td { font-weight: 600; background: var(--bg2); }
-  @media print {
-    body { background: white; color: black; }
-    .bottom-nav, .header, .panel:not(.active) { display: none !important; }
-    .panel.active { display: block !important; padding: 20px; }
-    .app { max-width: 100%; }
-    .print-table th, .print-table td { border: 1px solid #ccc; color: black; background: white !important; }
-    .print-table .cat-row td { background: #f0f0f0 !important; }
-    .print-table .total-row td { background: #f5f5f5 !important; }
-  }
-
-  /* Toast */
-  .toast { position: fixed; bottom: 90px; left: 50%; transform: translateX(-50%); background: var(--text); color: var(--bg); padding: 10px 20px; border-radius: var(--radius); font-size: 13px; opacity: 0; transition: opacity 0.2s; pointer-events: none; z-index: 100; white-space: nowrap; }
-  .toast.show { opacity: 1; }
-
-  /* Divider */
-  .divider { height: 0.5px; background: var(--border); margin: 2px 0; }
+  .toast{position:fixed;bottom:90px;left:50%;transform:translateX(-50%);background:var(--text);color:var(--bg);padding:10px 20px;border-radius:var(--radius);font-size:13px;opacity:0;transition:opacity 0.2s;pointer-events:none;z-index:100;white-space:nowrap;}
+  .toast.show{opacity:1;}
+  .divider{height:0.5px;background:var(--border);margin:2px 0;}
+  .empty-cart{font-size:13px;color:var(--text3);text-align:center;padding:16px 0;}
 </style>
 </head>
 <body>
 <div class="app">
   <div class="header">
     <h1>🏆 Family Randomist</h1>
-    <p id="header-sub">Ana · Doug · Olive · Elise · Sammy</p>
+    <p>Olive · Elise · Sammy</p>
   </div>
 
-  <!-- SCOREBOARD -->
   <div id="panel-scores" class="panel active">
     <div class="metric-grid" id="metrics-row"></div>
-    <div class="card">
-      <div class="section-label">Leaderboard</div>
-      <div id="leaderboard"></div>
-    </div>
-    <div class="card">
-      <div class="section-label" style="margin-bottom:8px;">Recent events</div>
-      <div class="event-log" id="recent-events"></div>
-    </div>
+    <div class="card"><div class="section-label">Leaderboard</div><div id="leaderboard"></div></div>
+    <div class="card"><div class="section-label" style="margin-bottom:8px;">Recent events</div><div class="event-log" id="recent-events"></div></div>
   </div>
 
-  <!-- LOG EVENT -->
   <div id="panel-log" class="panel">
     <div class="log-step">
       <div class="log-step-title">1 — Who did it?</div>
       <div class="who-grid" id="who-grid"></div>
     </div>
     <div class="log-step">
-      <div class="log-step-title">2 — Pick an activity</div>
+      <div class="log-step-title">2 — Tap activities to add <span style="font-size:11px;font-weight:400;color:var(--text2);">(tap again to remove)</span></div>
       <div id="activity-cats"></div>
     </div>
-    <div class="log-step" id="confirm-step" style="display:none;">
-      <div class="log-step-title">3 — Confirm</div>
-      <div class="confirm-box" id="confirm-box"></div>
-      <input class="note-input" type="text" id="evt-note" placeholder="Optional note (e.g. rocket hit 200ft!)" />
-      <button class="btn-primary" onclick="addEvent()">Log event ✓</button>
+    <div class="cart-section" id="cart-section">
+      <div class="cart-section-title">3 — Confirm &amp; log <span class="cart-badge" id="cart-count">0</span></div>
+      <div id="cart-items"><div class="empty-cart">No activities selected yet</div></div>
+      <input class="note-input" type="text" id="evt-note" placeholder="Optional note for all" />
+      <button class="btn-primary" id="log-btn" onclick="addEvents()" disabled>Log all events ✓</button>
     </div>
     <div class="card">
-      <div class="section-label" style="margin-bottom:8px;">Today's events</div>
+      <div class="section-label" style="margin-bottom:8px;">Today's events <span style="font-size:10px;color:var(--text3);font-weight:400;text-transform:none;letter-spacing:0;">(tap × to remove)</span></div>
       <div class="event-log" id="today-events"></div>
     </div>
   </div>
 
-  <!-- BADGES -->
   <div id="panel-badges" class="panel">
-    <div class="card">
-      <div class="section-label" style="margin-bottom:12px;">Badges earned</div>
+    <div class="card" style="margin-bottom:10px;">
+      <div class="section-label" style="margin-bottom:2px;">All badges</div>
+      <div style="font-size:12px;color:var(--text2);margin-bottom:12px;">Green = earned · Grey = not yet unlocked</div>
       <div id="badge-list"></div>
     </div>
     <div class="card">
-      <div class="section-label" style="margin-bottom:8px;">Daily badge text</div>
+      <div class="section-label" style="margin-bottom:8px;">Daily badge text for kids</div>
       <div class="text-preview" id="badge-preview"></div>
       <button class="btn-secondary" onclick="copyText(buildBadgeText())">Copy badge text</button>
     </div>
   </div>
 
-  <!-- TEXT FAMILY -->
   <div id="panel-text" class="panel">
-    <div class="card">
-      <div class="section-label" style="margin-bottom:8px;">Daily score update</div>
-      <div class="text-preview" id="score-preview"></div>
-      <button class="btn-secondary" onclick="copyText(buildScoreText())">Copy score text</button>
-    </div>
-    <div class="card" style="margin-top:4px;">
-      <div class="section-label" style="margin-bottom:8px;">Badge text for kids</div>
-      <div class="text-preview" id="badge-preview2"></div>
-      <button class="btn-secondary" onclick="copyText(buildBadgeText())">Copy badge text</button>
-    </div>
+    <div class="card"><div class="section-label" style="margin-bottom:8px;">Daily score update</div><div class="text-preview" id="score-preview"></div><button class="btn-secondary" onclick="copyText(buildScoreText())">Copy score text</button></div>
+    <div class="card"><div class="section-label" style="margin-bottom:8px;">Badge text for kids</div><div class="text-preview" id="badge-preview2"></div><button class="btn-secondary" onclick="copyText(buildBadgeText())">Copy badge text</button></div>
   </div>
 
-  <!-- FRIDGE CHART -->
+  <div id="panel-rules" class="panel">
+    <div class="prize-card"><div class="prize-title">💰 Grand Prize</div><div class="prize-desc">Most total points at end of the week wins <strong>$100</strong>.</div></div>
+    <div class="prize-card"><div class="prize-title">⭐ Daily Prize</div><div class="prize-desc">Earn <strong>50+ points in a single day</strong> to qualify for <strong>$50</strong> at week's end. You may only win one award.</div></div>
+    <div class="card">
+      <div class="section-label" style="margin-bottom:4px;">Ground Rules</div>
+      <div class="rule-item"><div class="rule-num">1</div><div class="rule-text"><strong>Witnesses required.</strong> At least 2 witnesses or 1 parent to earn points.</div></div>
+      <div class="rule-item"><div class="rule-num">2</div><div class="rule-text"><strong>Activity repeat limit.</strong> Max 2 times per activity per day for points.</div></div>
+      <div class="rule-item"><div class="rule-num">3</div><div class="rule-text"><strong>One award only.</strong> Grand prize or daily prize — not both.</div></div>
+      <div class="rule-item"><div class="rule-num">4</div><div class="rule-text"><strong>Judged activities.</strong> Decided by family vote.</div></div>
+      <div class="rule-item"><div class="rule-num">5</div><div class="rule-text"><strong>Have fun.</strong> Good sportsmanship counts!</div></div>
+    </div>
+    <div class="card"><div class="section-label" style="margin-bottom:8px;">Full activity list</div><div id="rules-act-list"></div></div>
+  </div>
+
   <div id="panel-print" class="panel">
     <div class="card" style="margin-bottom:10px;">
-      <div style="font-size:13px;color:var(--text2);margin-bottom:10px;">Tip: use your browser's Print / Share → Print to print this chart for the fridge.</div>
+      <div style="font-size:13px;color:var(--text2);margin-bottom:10px;">Use your browser's Print / Share → Print for the fridge.</div>
       <button class="btn-secondary" onclick="window.print()" style="margin-top:0;">🖨️ Print chart</button>
     </div>
     <div class="card">
-      <div class="print-wrap">
-        <table class="print-table">
-          <thead><tr id="print-header"></tr></thead>
-          <tbody id="print-body"></tbody>
-        </table>
+      <div class="print-wrap"><table class="print-table"><thead><tr id="print-header"></tr></thead><tbody id="print-body"></tbody></table></div>
+      <div class="rules-print">
+        <div class="rules-print-title">📋 Ground Rules</div>
+        <div class="rules-print-list">
+          💰 Most total points = $100 grand prize at end of week<br>
+          ⭐ 50+ points in a day = $50 daily prize (one award only)<br>
+          👁️ Need 2 witnesses OR 1 parent to earn points<br>
+          🔁 Max 2× per activity per day<br>
+          🏅 Judged activities decided by family vote
+        </div>
       </div>
     </div>
   </div>
 
-  <!-- BOTTOM NAV -->
   <nav class="bottom-nav">
-    <button class="nav-btn active" id="nav-scores" onclick="switchTab('scores',this)">
-      <span class="nav-icon">🏆</span>Scores
-    </button>
-    <button class="nav-btn" id="nav-log" onclick="switchTab('log',this)">
-      <span class="nav-icon">➕</span>Log
-    </button>
-    <button class="nav-btn" id="nav-badges" onclick="switchTab('badges',this)">
-      <span class="nav-icon">🏅</span>Badges
-    </button>
-    <button class="nav-btn" id="nav-text" onclick="switchTab('text',this)">
-      <span class="nav-icon">💬</span>Text
-    </button>
-    <button class="nav-btn" id="nav-print" onclick="switchTab('print',this)">
-      <span class="nav-icon">📋</span>Chart
-    </button>
+    <button class="nav-btn active" id="nav-scores" onclick="switchTab('scores',this)"><span class="nav-icon">🏆</span>Scores</button>
+    <button class="nav-btn" id="nav-log" onclick="switchTab('log',this)"><span class="nav-icon">➕</span>Log</button>
+    <button class="nav-btn" id="nav-badges" onclick="switchTab('badges',this)"><span class="nav-icon">🏅</span>Badges</button>
+    <button class="nav-btn" id="nav-text" onclick="switchTab('text',this)"><span class="nav-icon">💬</span>Text</button>
+    <button class="nav-btn" id="nav-rules" onclick="switchTab('rules',this)"><span class="nav-icon">📜</span>Rules</button>
+    <button class="nav-btn" id="nav-print" onclick="switchTab('print',this)"><span class="nav-icon">📋</span>Chart</button>
   </nav>
 </div>
 <div class="toast" id="toast"></div>
 
 <script>
 const CATEGORIES = [
-  { id: 'beach', label: 'Beach', icon: '🏖️', bc: 'beach-b', activities: [
-    { id: 'b1', name: 'Swims out the furthest (judged)', pts: 15 },
-    { id: 'b2', name: 'Build a sandcastle (judged)', pts: 20 },
-    { id: 'b3', name: 'Longest standing on paddleboard', pts: 10 },
-    { id: 'b4', name: 'First one in the water each day', pts: 5 },
-    { id: 'b5', name: 'Found the prettiest shell (judged)', pts: 20 },
-    { id: 'b6', name: 'Beach frisbee: 20 catches in a row', pts: 20 },
-    { id: 'b7', name: 'Highest rocket launch', pts: 25, note: 'Family judges height — add note with estimate' },
+  {id:'beach',label:'Beach',icon:'🏖️',bc:'beach-b',activities:[
+    {id:'b1',name:'Spend 30 minutes waist down in the water',pts:15},
+    {id:'b2',name:'Build a sandcastle (judged)',pts:10},
+    {id:'b3',name:'Longest standing on paddleboard',pts:10},
+    {id:'b4',name:'First one in the water each day',pts:5},
+    {id:'b5',name:'Find an intact starfish',pts:20},
+    {id:'b6',name:'Beach frisbee: 20 catches in a row',pts:20},
+    {id:'b7',name:'Find the largest intact shell of the day',pts:20,note:'Family judges at end of day'},
+    {id:'b8',name:'Launch water rocket 5 times',pts:5},
   ]},
-  { id: 'pool', label: 'Pool', icon: '🏊', bc: 'pool-b', activities: [
-    { id: 'p1', name: 'Win a pool race (any stroke)', pts: 15 },
-    { id: 'p2', name: 'Hold breath underwater 45+ seconds', pts: 10 },
-    { id: 'p4', name: 'Pick up a quarter from the bottom', pts: 15 },
-    { id: 'p5', name: 'Handstand in pool (3 seconds)', pts: 8 },
+  {id:'pool',label:'Pool',icon:'🏊',bc:'pool-b',activities:[
+    {id:'p1',name:'Win a pool race (any stroke)',pts:5},
+    {id:'p2',name:'Hold breath underwater 45+ seconds',pts:10},
+    {id:'p4',name:'Pick up a quarter from the bottom',pts:5},
+    {id:'p5',name:'Handstand in pool (3 seconds)',pts:5},
   ]},
-  { id: 'challenge', label: 'Challenge', icon: '⚡', bc: 'chall-b', activities: [
-    { id: 'c1', name: 'Wake up before 8am', pts: 5 },
-    { id: 'c2', name: 'Complete a 30-min walk/run', pts: 15 },
-    { id: 'c3', name: 'No phone for 2 hours', pts: 20 },
-    { id: 'c4', name: 'Cook/help prepare a meal', pts: 15 },
-    { id: 'c5', name: 'Read 30 min outside', pts: 10 },
-    { id: 'c6', name: 'Grocery gatherer award', pts: 15, note: 'Volunteered for the grocery run' },
-    { id: 'c7', name: 'Healthiest day achieved (judged)', pts: 20, note: 'Family votes at end of day' },
+  {id:'challenge',label:'Challenge',icon:'⚡',bc:'chall-b',activities:[
+    {id:'c1',name:'Wake up before 8am',pts:5},
+    {id:'c2',name:'Complete a 30-min bike ride',pts:15},
+    {id:'c3',name:'No phone for 2 hours',pts:10},
+    {id:'c4',name:'Cook/prepare a meal',pts:15},
+    {id:'c5',name:'Read 30 min outside',pts:10},
+    {id:'c6',name:'Grocery gatherer award',pts:15,note:'Volunteered for the grocery run'},
+    {id:'c8',name:'Try 1 new food',pts:10},
+    {id:'c9',name:'Pee Wee Golf winner',pts:25},
+    {id:'c10',name:'Pee Wee Golf participant',pts:5},
+    {id:'c11',name:'Find the hidden ball',pts:10},
   ]},
-  { id: 'games', label: 'Games', icon: '🎮', bc: 'games-b', activities: [
-    { id: 'g1', name: 'Murder in Miami — solver', pts: 30, note: 'Individual or team that cracks it', rep: true },
-    { id: 'g2', name: 'Euchre card champion', pts: 20, note: 'Can be won multiple times', rep: true },
-    { id: 'g3', name: 'Nertz/Crunch winner', pts: 20, note: 'Can be won multiple times', rep: true },
+  {id:'wildlife',label:'Wildlife',icon:'🦎',bc:'wild-b',activities:[
+    {id:'w1',name:'Take a picture of a lizard',pts:5},
+    {id:'w2',name:'Take a picture of an iguana',pts:10},
+    {id:'w3',name:'Take a picture of an alligator',pts:30},
   ]},
-  { id: 'bonus', label: 'Bonus', icon: '⭐', bc: 'bonus-b', activities: [
-    { id: 'x1', name: 'Sunrise watch (be up for it)', pts: 30 },
-    { id: 'x2', name: 'Catch a fish', pts: 35 },
-    { id: 'x3', name: 'Best photo of the trip (family vote)', pts: 40 },
-    { id: 'x4', name: 'Daily challenge winner (family votes)', pts: 25 },
+  {id:'games',label:'Games',icon:'🎮',bc:'games-b',activities:[
+    {id:'g1',name:'Murder in Miami — solver',pts:10,note:'Individual or team that cracks it',rep:true},
+    {id:'g2',name:'Euchre: play 3 fully scored rounds',pts:15,note:'Can be won multiple times',rep:true},
+    {id:'g3',name:'Nertz/Crunch winner',pts:10,note:'Can be won multiple times',rep:true},
+  ]},
+  {id:'bonus',label:'Bonus',icon:'⭐',bc:'bonus-b',activities:[
+    {id:'x1',name:'Sunrise watch (be up for it)',pts:30},
+    {id:'x2',name:'Catch a fish',pts:35},
+    {id:'x3',name:'Best photo of the trip (family vote)',pts:40},
+    {id:'x5',name:'Help a stranger',pts:25},
   ]},
 ];
 
 const MEMBERS = [
-  { id: 1, name: 'Ana',   color: '#F4C0D1', tc: '#72243E', sc: '#993556' },
-  { id: 2, name: 'Doug',  color: '#C0DD97', tc: '#27500A', sc: '#3B6D11' },
-  { id: 3, name: 'Olive', color: '#FAC775', tc: '#633806', sc: '#854F0B' },
-  { id: 4, name: 'Elise', color: '#B5D4F4', tc: '#0C447C', sc: '#185FA5' },
-  { id: 5, name: 'Sammy', color: '#9FE1CB', tc: '#085041', sc: '#0F6E56' },
+  {id:3,name:'Olive',color:'#FAC775',tc:'#633806',sc:'#854F0B'},
+  {id:4,name:'Elise',color:'#B5D4F4',tc:'#0C447C',sc:'#185FA5'},
+  {id:5,name:'Sammy',color:'#9FE1CB',tc:'#085041',sc:'#0F6E56'},
 ];
+
+// Helper: safe count of events matching member + activity
+function evCount(events, memberId, actId) {
+  if (!Array.isArray(events)) return 0;
+  return events.filter(e => e && e.mid === memberId && e.aid === actId).length;
+}
+
+// Helper: total pts for member on a given date string
+function ptsOnDay(events, memberId, dateStr) {
+  if (!Array.isArray(events)) return 0;
+  return events
+    .filter(e => e && e.mid === memberId && new Date(e.ts).toDateString() === dateStr)
+    .reduce((s, e) => s + (e.pts || 0), 0);
+}
 
 const BADGES = [
-  { id: 'furthest',    icon: '🌊', name: 'Deep Diver',       check: (m,e)    => e.filter(x=>x.mid===m.id&&x.aid==='b1').length>=3 },
-  { id: 'shell',       icon: '🐚', name: 'Shell Collector',  check: (m,e)    => e.filter(x=>x.mid===m.id&&x.aid==='b5').length>=1 },
-  { id: 'paddle',      icon: '🏄', name: 'Board Master',     check: (m,e)    => e.filter(x=>x.mid===m.id&&x.aid==='b3').length>=3 },
-  { id: 'rocket',      icon: '🚀', name: 'Rocketeer',        check: (m,e)    => e.filter(x=>x.mid===m.id&&x.aid==='b7').length>=1 },
-  { id: 'quarter',     icon: '🪙', name: 'Quarter Finder',   check: (m,e)    => e.filter(x=>x.mid===m.id&&x.aid==='p4').length>=3 },
-  { id: 'detective',   icon: '🔍', name: 'Miami Detective',  check: (m,e)    => e.filter(x=>x.mid===m.id&&x.aid==='g1').length>=1 },
-  { id: 'euchre',      icon: '🃏', name: 'Euchre Champ',     check: (m,e)    => e.filter(x=>x.mid===m.id&&x.aid==='g2').length>=2 },
-  { id: 'nertz',       icon: '🎴', name: 'Nertz Master',     check: (m,e)    => e.filter(x=>x.mid===m.id&&x.aid==='g3').length>=2 },
-  { id: 'grocer',      icon: '🛒', name: 'Grocery Hero',     check: (m,e)    => e.filter(x=>x.mid===m.id&&x.aid==='c6').length>=2 },
-  { id: 'healthy',     icon: '🥗', name: 'Health Guru',      check: (m,e)    => e.filter(x=>x.mid===m.id&&x.aid==='c7').length>=2 },
-  { id: 'earlybird',   icon: '🌅', name: 'Early Bird',       check: (m,e)    => e.filter(x=>x.mid===m.id&&x.aid==='x1').length>=1 },
-  { id: 'angler',      icon: '🎣', name: 'Angler',           check: (m,e)    => e.filter(x=>x.mid===m.id&&x.aid==='x2').length>=1 },
-  { id: 'swimmer',     icon: '🏊', name: 'Pool Shark',       check: (m,e)    => e.filter(x=>x.mid===m.id&&x.aid==='p1').length>=3 },
-  { id: 'chef',        icon: '🍳', name: 'Family Chef',      check: (m,e)    => e.filter(x=>x.mid===m.id&&x.aid==='c4').length>=3 },
-  { id: 'reader',      icon: '📖', name: 'Bookworm',         check: (m,e)    => e.filter(x=>x.mid===m.id&&x.aid==='c5').length>=3 },
-  { id: 'detox',       icon: '📵', name: 'Off the Grid',     check: (m,e)    => e.filter(x=>x.mid===m.id&&x.aid==='c3').length>=2 },
-  { id: 'topscorer',   icon: '🏆', name: 'Top Scorer',       check: (m,e,sc) => sc&&sc[0]&&sc[0].id===m.id&&sc[0].pts>0 },
-  { id: 'onroll',      icon: '🔥', name: 'On a Roll',        check: (m,e)    => e.filter(x=>x.mid===m.id&&new Date(x.ts).toDateString()===new Date().toDateString()).length>=3 },
-  { id: 'photo',       icon: '📸', name: 'Shot of the Trip', check: (m,e)    => e.filter(x=>x.mid===m.id&&x.aid==='x3').length>=1 },
+  {id:'starfish', icon:'⭐', name:'Starfish Hunter',   unlock:'Find 1 intact starfish',       check:(m,e,sc)=>evCount(e,m.id,'b5')>=1},
+  {id:'shell',    icon:'🐚', name:'Shell Champion',    unlock:'Win largest shell 2 days',     check:(m,e,sc)=>evCount(e,m.id,'b7')>=2},
+  {id:'paddle',   icon:'🏄', name:'Board Master',      unlock:'Paddle 3× total',              check:(m,e,sc)=>evCount(e,m.id,'b3')>=3},
+  {id:'waist',    icon:'🌊', name:'Water Logged',      unlock:'30 min in water 3× total',     check:(m,e,sc)=>evCount(e,m.id,'b1')>=3},
+  {id:'rocket',   icon:'🚀', name:'Rocketeer',         unlock:'Launch rockets 3× total',      check:(m,e,sc)=>evCount(e,m.id,'b8')>=3},
+  {id:'quarter',  icon:'🪙', name:'Quarter Finder',    unlock:'Pick up quarter 3× total',     check:(m,e,sc)=>evCount(e,m.id,'p4')>=3},
+  {id:'swimmer',  icon:'🏊', name:'Pool Shark',        unlock:'Win 3 pool races',             check:(m,e,sc)=>evCount(e,m.id,'p1')>=3},
+  {id:'lizard',   icon:'🦎', name:'Lizard Spotter',    unlock:'Photo 3 lizards',              check:(m,e,sc)=>evCount(e,m.id,'w1')>=3},
+  {id:'iguana',   icon:'🦖', name:'Iguana Whisperer',  unlock:'Photo 2 iguanas',              check:(m,e,sc)=>evCount(e,m.id,'w2')>=2},
+  {id:'gator',    icon:'🐊', name:'Gator Spotter',     unlock:'Photo 1 alligator',            check:(m,e,sc)=>evCount(e,m.id,'w3')>=1},
+  {id:'detective',icon:'🔍', name:'Miami Detective',   unlock:'Solve Murder in Miami',        check:(m,e,sc)=>evCount(e,m.id,'g1')>=1},
+  {id:'euchre',   icon:'🃏', name:'Euchre Champ',      unlock:'Win Euchre 2× total',          check:(m,e,sc)=>evCount(e,m.id,'g2')>=2},
+  {id:'nertz',    icon:'🎴', name:'Nertz Master',      unlock:'Win Nertz 2× total',           check:(m,e,sc)=>evCount(e,m.id,'g3')>=2},
+  {id:'foodie',   icon:'🍽️', name:'Foodie',            unlock:'Try 3 new foods',              check:(m,e,sc)=>evCount(e,m.id,'c8')>=3},
+  {id:'golfer',   icon:'⛳', name:'Pee Wee Champ',     unlock:'Win Pee Wee Golf',             check:(m,e,sc)=>evCount(e,m.id,'c9')>=1},
+  {id:'grocer',   icon:'🛒', name:'Grocery Hero',      unlock:'Grocery run 2× total',         check:(m,e,sc)=>evCount(e,m.id,'c6')>=2},
+  {id:'kind',     icon:'🤝', name:'Good Samaritan',    unlock:'Help a stranger',              check:(m,e,sc)=>evCount(e,m.id,'x5')>=1},
+  {id:'earlybird',icon:'🌅', name:'Early Bird',        unlock:'Watch the sunrise',            check:(m,e,sc)=>evCount(e,m.id,'x1')>=1},
+  {id:'angler',   icon:'🎣', name:'Angler',            unlock:'Catch a fish',                 check:(m,e,sc)=>evCount(e,m.id,'x2')>=1},
+  {id:'chef',     icon:'🍳', name:'Family Chef',       unlock:'Cook 3 meals total',           check:(m,e,sc)=>evCount(e,m.id,'c4')>=3},
+  {id:'reader',   icon:'📖', name:'Bookworm',          unlock:'Read outside 3× total',        check:(m,e,sc)=>evCount(e,m.id,'c5')>=3},
+  {id:'detox',    icon:'📵', name:'Off the Grid',      unlock:'No phone 2× total',            check:(m,e,sc)=>evCount(e,m.id,'c3')>=2},
+  {id:'photo',    icon:'📸', name:'Shot of the Trip',  unlock:'Win best photo vote',          check:(m,e,sc)=>evCount(e,m.id,'x3')>=1},
+  {id:'topscorer',icon:'🏆', name:'Top Scorer',        unlock:'Currently leading the board',  check:(m,e,sc)=>{
+    if(!sc||!sc.length)return false;
+    return sc[0].id===m.id&&sc[0].pts>0;
+  }},
+  {id:'onroll',   icon:'🔥', name:'On a Roll',         unlock:'3+ events in one day',         check:(m,e,sc)=>{
+    if(!Array.isArray(e)||!e.length)return false;
+    const days=[...new Set(e.filter(x=>x&&x.mid===m.id).map(x=>new Date(x.ts).toDateString()))];
+    return days.some(d=>e.filter(x=>x&&x.mid===m.id&&new Date(x.ts).toDateString()===d).length>=3);
+  }},
+  {id:'daily50',  icon:'💰', name:'Daily Prize Hero',  unlock:'50+ points in a single day',   check:(m,e,sc)=>{
+    if(!Array.isArray(e)||!e.length)return false;
+    const days=[...new Set(e.filter(x=>x&&x.mid===m.id).map(x=>new Date(x.ts).toDateString()))];
+    return days.some(d=>ptsOnDay(e,m.id,d)>=50);
+  }},
 ];
 
-let state = { events: [] };
-let selMember = null;
-let selAct = null;
+let state={events:[]};
+let selMember=null;
+let cart=[];
 
-function actMap() {
-  const m = {};
-  CATEGORIES.forEach(c => c.activities.forEach(a => { m[a.id] = { ...a, catLabel: c.label, bc: c.bc, icon: c.icon }; }));
+function buildActMap(){
+  const m={};
+  CATEGORIES.forEach(c=>c.activities.forEach(a=>{m[a.id]={...a,catLabel:c.label,bc:c.bc,catIcon:c.icon};}));
   return m;
 }
 
-function load() { try { const s = localStorage.getItem('randomist_v5'); if (s) state = JSON.parse(s); } catch(e) {} }
-function save() { localStorage.setItem('randomist_v5', JSON.stringify(state)); }
+function load(){try{const s=localStorage.getItem('randomist_v5');if(s)state=JSON.parse(s);}catch(e){}}
+function save(){localStorage.setItem('randomist_v5',JSON.stringify(state));}
 
-function getScores() {
-  return MEMBERS.map(m => {
-    const pts = state.events.filter(e => e.mid === m.id).reduce((s, e) => s + e.pts, 0);
-    const tpts = state.events.filter(e => e.mid === m.id && new Date(e.ts).toDateString() === new Date().toDateString()).reduce((s, e) => s + e.pts, 0);
-    return { ...m, pts, tpts };
-  }).sort((a, b) => b.pts - a.pts);
+function deleteEvent(id){state.events=state.events.filter(e=>e.id!==id);save();initAll();showToast('Event removed');}
+
+function getScores(){
+  return MEMBERS.map(m=>{
+    const pts=state.events.filter(e=>e&&e.mid===m.id).reduce((s,e)=>s+(e.pts||0),0);
+    const tpts=state.events.filter(e=>e&&e.mid===m.id&&new Date(e.ts).toDateString()===new Date().toDateString()).reduce((s,e)=>s+(e.pts||0),0);
+    return{...m,pts,tpts};
+  }).sort((a,b)=>b.pts-a.pts);
 }
 
-function initScores() {
-  const sc = getScores();
-  const tot = sc.reduce((s, m) => s + m.pts, 0);
-  const tevts = state.events.filter(e => new Date(e.ts).toDateString() === new Date().toDateString()).length;
-  document.getElementById('metrics-row').innerHTML = `
+function renderEventItem(e,am,mm){
+  const mem=mm[e.mid];const act=am[e.aid];
+  return`<div class="event-item">
+    <div class="avatar" style="width:28px;height:28px;font-size:11px;flex-shrink:0;background:${mem?.color||'#eee'};color:${mem?.tc||'#333'}">${(mem?.name||'?').slice(0,2).toUpperCase()}</div>
+    <div style="flex:1;min-width:0;"><div class="event-name">${mem?.name||'?'}</div><div class="event-detail">${act?.name||e.aname||'?'}${e.note?' · '+e.note:''}</div></div>
+    <div class="event-pts">+${e.pts}</div>
+    <button class="delete-btn" onclick="deleteEvent(${e.id})">×</button>
+  </div>`;
+}
+
+function initScores(){
+  const sc=getScores();
+  const tot=sc.reduce((s,m)=>s+m.pts,0);
+  const tevts=state.events.filter(e=>new Date(e.ts).toDateString()===new Date().toDateString()).length;
+  document.getElementById('metrics-row').innerHTML=`
     <div class="metric"><div class="metric-label">Total pts</div><div class="metric-value">${tot}</div></div>
     <div class="metric"><div class="metric-label">Events</div><div class="metric-value">${state.events.length}</div></div>
     <div class="metric"><div class="metric-label">Today</div><div class="metric-value">${tevts}</div></div>
     <div class="metric"><div class="metric-label">Players</div><div class="metric-value">${MEMBERS.length}</div></div>`;
-  document.getElementById('leaderboard').innerHTML = sc.map((m, i) => `
+  document.getElementById('leaderboard').innerHTML=sc.map((m,i)=>`
     <div class="member-row">
       <div class="avatar" style="background:${m.color};color:${m.tc}">${m.name.slice(0,2).toUpperCase()}</div>
-      <div style="flex:1;">
-        <div style="font-size:14px;font-weight:600;">${m.name}${i===0&&m.pts>0?' 👑':''}</div>
-        <div style="font-size:11px;color:var(--text2);">${m.tpts>0?'+'+m.tpts+' today':'no events today'}</div>
-      </div>
-      <div class="member-pts">${m.pts}<span style="font-size:11px;color:var(--text2);font-weight:400;"> pts</span></div>
+      <div style="flex:1;"><div style="font-size:14px;font-weight:600;">${m.name}${i===0&&m.pts>0?' 👑':''}</div>
+      <div style="font-size:11px;color:var(--text2);">${m.tpts>0?'+'+m.tpts+' today':'no events today'}${m.tpts>=50?' · 💰 $50 qualified!':''}</div></div>
+      <div style="font-size:17px;font-weight:600;">${m.pts}<span style="font-size:11px;color:var(--text2);font-weight:400;"> pts</span></div>
     </div>`).join('');
-  const am = actMap();
-  const mm = Object.fromEntries(MEMBERS.map(m => [m.id, m]));
-  const recent = [...state.events].sort((a, b) => b.ts - a.ts).slice(0, 8);
-  document.getElementById('recent-events').innerHTML = recent.length ? recent.map(e => {
-    const mem = mm[e.mid]; const act = am[e.aid];
-    return `<div class="event-item">
-      <div class="avatar" style="width:28px;height:28px;font-size:11px;flex-shrink:0;background:${mem?.color||'#eee'};color:${mem?.tc||'#333'}">${(mem?.name||'?').slice(0,2).toUpperCase()}</div>
-      <div style="flex:1;min-width:0;">
-        <div class="event-name">${mem?.name||'?'}</div>
-        <div class="event-detail">${act?.name||e.aname||'?'}${e.note?' · '+e.note:''}</div>
-      </div>
-      <div class="event-pts">+${e.pts}</div>
-    </div>`;
-  }).join('') : '<div style="font-size:13px;color:var(--text2);padding:8px 0;">No events yet — log the first one!</div>';
+  const am=buildActMap();const mm=Object.fromEntries(MEMBERS.map(m=>[m.id,m]));
+  const recent=[...state.events].sort((a,b)=>b.ts-a.ts).slice(0,10);
+  document.getElementById('recent-events').innerHTML=recent.length
+    ?recent.map(e=>renderEventItem(e,am,mm)).join('')
+    :'<div style="font-size:13px;color:var(--text2);padding:8px 0;">No events yet!</div>';
 }
 
-function initLog() {
-  document.getElementById('who-grid').innerHTML = MEMBERS.map(m => `
-    <button class="who-btn${selMember===m.id?' selected':''}"
-      style="${selMember===m.id?`border-color:${m.sc};color:${m.sc};`:''}"
-      onclick="selMem(${m.id})">
+function toggleActivity(catId,actId){
+  const cat=CATEGORIES.find(c=>c.id===catId);
+  const act=cat.activities.find(a=>a.id===actId);
+  const idx=cart.findIndex(x=>x.id===actId);
+  if(idx>=0){cart.splice(idx,1);}else{cart.push({...act,catLabel:cat.label,bc:cat.bc,catIcon:cat.icon});}
+  renderCart();renderActivityList();
+}
+
+function removeFromCart(actId){cart=cart.filter(x=>x.id!==actId);renderCart();renderActivityList();}
+
+function renderCart(){
+  const count=cart.length;
+  document.getElementById('cart-count').textContent=count;
+  document.getElementById('log-btn').disabled=!(selMember&&count>0);
+  if(count===0){document.getElementById('cart-items').innerHTML='<div class="empty-cart">No activities selected yet</div>';return;}
+  const totalPts=cart.reduce((s,a)=>s+a.pts,0);
+  document.getElementById('cart-items').innerHTML=
+    cart.map(a=>`<div class="cart-item">
+      <span class="pts-badge ${a.bc}">+${a.pts}</span>
+      <div style="flex:1;min-width:0;"><div class="cart-item-name">${a.name}</div><div class="cart-item-cat">${a.catIcon} ${a.catLabel}</div></div>
+      <button class="cart-remove" onclick="removeFromCart('${a.id}')">×</button>
+    </div>`).join('')+
+    `<div style="display:flex;justify-content:flex-end;padding:8px 0 2px;font-size:13px;font-weight:600;color:var(--success);">Total: +${totalPts} pts</div>`;
+}
+
+function renderActivityList(){
+  const cartIds=new Set(cart.map(x=>x.id));
+  CATEGORIES.forEach(cat=>{
+    cat.activities.forEach(a=>{
+      const el=document.getElementById('arow-'+a.id);if(!el)return;
+      if(cartIds.has(a.id)){
+        el.classList.add('in-cart');
+        if(!el.querySelector('.cart-check')){const d=document.createElement('div');d.className='cart-check';d.textContent='✓';el.appendChild(d);}
+      }else{
+        el.classList.remove('in-cart');
+        const chk=el.querySelector('.cart-check');if(chk)chk.remove();
+      }
+    });
+  });
+}
+
+function initLog(){
+  document.getElementById('who-grid').innerHTML=MEMBERS.map(m=>`
+    <button class="who-btn${selMember===m.id?' selected':''}" style="${selMember===m.id?`border-color:${m.sc};color:${m.sc};`:''}" onclick="selMem(${m.id})">
       <div class="who-dot" style="background:${m.color};border:1.5px solid ${m.sc};"></div>${m.name}
     </button>`).join('');
-  document.getElementById('activity-cats').innerHTML = CATEGORIES.map(cat => `
+  const cartIds=new Set(cart.map(x=>x.id));
+  document.getElementById('activity-cats').innerHTML=CATEGORIES.map(cat=>`
     <div class="divider"></div>
     <div class="cat-header" onclick="toggleCat('${cat.id}')">
-      <span style="font-size:18px;">${cat.icon}</span>
-      <span class="cat-label">${cat.label}</span>
+      <span style="font-size:18px;">${cat.icon}</span><span class="cat-label">${cat.label}</span>
       <span class="cat-chevron" id="chev-${cat.id}">▶</span>
     </div>
     <div class="cat-body" id="cb-${cat.id}">
-      ${cat.activities.map(a => `
-        <div class="activity-row${selAct&&selAct.id===a.id?' selected-act':''}" onclick="selActivity('${cat.id}','${a.id}')">
+      ${cat.activities.map(a=>`
+        <div class="activity-row${cartIds.has(a.id)?' in-cart':''}" id="arow-${a.id}" onclick="toggleActivity('${cat.id}','${a.id}')">
           <span class="pts-badge ${cat.bc}">+${a.pts}</span>
-          <div style="flex:1;">
-            <div class="act-name">${a.name}${a.rep?'<span class="rep-tag">repeatable</span>':''}</div>
-            ${a.note?`<div class="act-note">${a.note}</div>`:''}
-          </div>
+          <div style="flex:1;"><div class="act-name">${a.name}${a.rep?'<span class="rep-tag">repeatable</span>':''}</div>${a.note?`<div class="act-note">${a.note}</div>`:''}</div>
+          ${cartIds.has(a.id)?'<div class="cart-check">✓</div>':''}
         </div>`).join('')}
     </div>`).join('');
-  updateConfirm();
-  renderToday();
+  renderCart();renderToday();
 }
 
-function selMem(id) { selMember = id; initLog(); }
-
-function toggleCat(id) {
-  document.getElementById('cb-'+id).classList.toggle('open');
-  document.getElementById('chev-'+id).classList.toggle('open');
+function selMem(id){
+  selMember=id;
+  document.querySelectorAll('.who-btn').forEach((b,i)=>{
+    const m=MEMBERS[i];if(!m)return;
+    b.classList.toggle('selected',m.id===id);
+    b.style.borderColor=m.id===id?m.sc:'';b.style.color=m.id===id?m.sc:'';
+  });
+  document.getElementById('log-btn').disabled=!(selMember&&cart.length>0);
 }
 
-function selActivity(catId, actId) {
-  const cat = CATEGORIES.find(c => c.id === catId);
-  const act = cat.activities.find(a => a.id === actId);
-  selAct = { ...act, catLabel: cat.label, bc: cat.bc, icon: cat.icon };
-  updateConfirm();
-  document.getElementById('confirm-step').scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+function toggleCat(id){document.getElementById('cb-'+id).classList.toggle('open');document.getElementById('chev-'+id).classList.toggle('open');}
+
+function addEvents(){
+  if(!selMember||!cart.length)return;
+  const note=document.getElementById('evt-note').value.trim();
+  const now=Date.now();
+  cart.forEach((a,i)=>{state.events.push({id:now+i,mid:selMember,aid:a.id,aname:a.name,pts:a.pts,note,ts:now+i});});
+  const totalPts=cart.reduce((s,a)=>s+a.pts,0);const count=cart.length;
+  document.getElementById('evt-note').value='';cart=[];
+  save();initAll();showToast(`✓ ${count} event${count>1?'s':''} logged (+${totalPts} pts)`);
 }
 
-function updateConfirm() {
-  const step = document.getElementById('confirm-step');
-  if (selAct && selMember) {
-    step.style.display = 'block';
-    const mem = MEMBERS.find(m => m.id === selMember);
-    document.getElementById('confirm-box').innerHTML = `
-      <div class="avatar" style="background:${mem.color};color:${mem.tc};width:30px;height:30px;font-size:11px;flex-shrink:0;">${mem.name.slice(0,2).toUpperCase()}</div>
-      <div style="flex:1;">
-        <div style="font-size:13px;font-weight:600;">${mem.name}</div>
-        <div style="font-size:12px;color:var(--text2);">${selAct.icon} ${selAct.catLabel} — ${selAct.name}</div>
-      </div>
-      <span class="pts-badge ${selAct.bc}">+${selAct.pts}</span>`;
-  } else { step.style.display = 'none'; }
+function renderToday(){
+  const am=buildActMap();const mm=Object.fromEntries(MEMBERS.map(m=>[m.id,m]));
+  const today=[...state.events].filter(e=>new Date(e.ts).toDateString()===new Date().toDateString()).sort((a,b)=>b.ts-a.ts);
+  document.getElementById('today-events').innerHTML=today.length
+    ?today.map(e=>renderEventItem(e,am,mm)).join('')
+    :'<div style="font-size:13px;color:var(--text2);padding:8px 0;">Nothing logged today yet.</div>';
 }
 
-function addEvent() {
-  if (!selMember || !selAct) return;
-  const note = document.getElementById('evt-note').value.trim();
-  state.events.push({ id: Date.now(), mid: selMember, aid: selAct.id, aname: selAct.name, pts: selAct.pts, note, ts: Date.now() });
-  document.getElementById('evt-note').value = '';
-  selAct = null;
-  save(); initAll(); showToast('✓ Event logged!');
-}
-
-function renderToday() {
-  const am = actMap();
-  const mm = Object.fromEntries(MEMBERS.map(m => [m.id, m]));
-  const today = [...state.events].filter(e => new Date(e.ts).toDateString() === new Date().toDateString()).sort((a, b) => b.ts - a.ts);
-  document.getElementById('today-events').innerHTML = today.length ? today.map(e => {
-    const mem = mm[e.mid]; const act = am[e.aid];
-    return `<div class="event-item">
-      <div class="avatar" style="width:28px;height:28px;font-size:11px;flex-shrink:0;background:${mem?.color||'#eee'};color:${mem?.tc||'#333'}">${(mem?.name||'?').slice(0,2).toUpperCase()}</div>
-      <div style="flex:1;min-width:0;">
-        <div class="event-name">${mem?.name||'?'}</div>
-        <div class="event-detail">${act?.name||e.aname||'?'}${e.note?' · '+e.note:''}</div>
-      </div>
-      <div class="event-pts">+${e.pts}</div>
-    </div>`;
-  }).join('') : '<div style="font-size:13px;color:var(--text2);padding:8px 0;">Nothing logged today yet.</div>';
-}
-
-function initBadges() {
-  const sc = getScores();
-  document.getElementById('badge-list').innerHTML = MEMBERS.map(m => {
-    const earned = BADGES.filter(b => b.check(m, state.events, sc));
-    const locked = BADGES.filter(b => !b.check(m, state.events, sc));
-    return `<div style="margin-bottom:16px;">
-      <div style="display:flex;align-items:center;gap:8px;margin-bottom:8px;">
+function initBadges(){
+  const sc=getScores();
+  // Render ALL badges for each member, clearly earned vs locked
+  document.getElementById('badge-list').innerHTML=MEMBERS.map(m=>{
+    let earnedCount=0;
+    const pills=BADGES.map(b=>{
+      let earned=false;
+      try{earned=b.check(m,state.events,sc);}catch(err){earned=false;}
+      if(earned)earnedCount++;
+      return`<div class="badge-pill ${earned?'badge-earned':'badge-locked'}" title="${b.unlock}">
+        <span>${b.icon}</span><span>${b.name}</span>
+      </div>`;
+    }).join('');
+    return`<div class="badge-member-block">
+      <div class="badge-member-header">
         <div class="avatar" style="background:${m.color};color:${m.tc}">${m.name.slice(0,2).toUpperCase()}</div>
         <span style="font-weight:600;font-size:14px;">${m.name}</span>
-        <span style="font-size:12px;color:var(--text2);">${earned.length}/${BADGES.length}</span>
+        <span class="badge-progress">${earnedCount} of ${BADGES.length} earned</span>
       </div>
-      <div>${earned.map(b=>`<span class="badge-pill badge-earned">${b.icon} ${b.name}</span>`).join('')}${locked.map(b=>`<span class="badge-pill badge-locked">${b.icon} ${b.name}</span>`).join('')}</div>
+      <div class="badge-grid-wrap">${pills}</div>
     </div>`;
-  }).join('');
-  document.getElementById('badge-preview').textContent = buildBadgeText();
+  }).join('<div style="height:1px;background:var(--border);margin:12px 0;"></div>');
+  document.getElementById('badge-preview').textContent=buildBadgeText();
 }
 
-function buildBadgeText() {
-  const sc = getScores();
-  const today = new Date().toLocaleDateString('en-US', { month: 'short', day: 'numeric' });
-  let lines = [`🏅 Family Randomist — Badge Update (${today})`, ''];
-  MEMBERS.forEach(m => {
-    const earned = BADGES.filter(b => b.check(m, state.events, sc));
-    if (earned.length > 0) lines.push(`${m.name}: ${earned.map(b => `${b.icon} ${b.name}`).join(', ')}`);
+function buildBadgeText(){
+  const sc=getScores();
+  const today=new Date().toLocaleDateString('en-US',{month:'short',day:'numeric'});
+  let lines=[`🏅 Family Randomist — Badge Update (${today})`,''];
+  MEMBERS.forEach(m=>{
+    const earned=BADGES.filter(b=>{try{return b.check(m,state.events,sc);}catch(e){return false;}});
+    if(earned.length>0)lines.push(`${m.name}: ${earned.map(b=>`${b.icon} ${b.name}`).join(', ')}`);
   });
-  if (lines.length === 2) lines.push('No badges yet — get out there!');
+  if(lines.length===2)lines.push('No badges yet — get out there!');
   return lines.join('\n');
 }
 
-function buildScoreText() {
-  const sc = getScores();
-  const today = new Date().toLocaleDateString('en-US', { weekday: 'short', month: 'short', day: 'numeric' });
-  const am = actMap();
-  const mm = Object.fromEntries(MEMBERS.map(m => [m.id, m]));
-  const tevts = state.events.filter(e => new Date(e.ts).toDateString() === new Date().toDateString());
-  let lines = [`📊 Family Randomist — ${today}`, '', '🏆 Standings:'];
-  sc.forEach((m, i) => lines.push(`${i===0?'👑':i===1?'🥈':i===2?'🥉':'  '} ${m.name}: ${m.pts} pts${m.tpts>0?' (+'+m.tpts+' today)':''}`));
-  if (tevts.length > 0) {
-    lines.push('', "📅 Today's highlights:");
-    tevts.slice(-6).forEach(e => {
-      const act = am[e.aid];
-      lines.push(`• ${mm[e.mid]?.name||'?'} — ${act?.name||e.aname||'?'}${e.note?' ('+e.note+')':''} +${e.pts}pts`);
-    });
+function buildScoreText(){
+  const sc=getScores();
+  const today=new Date().toLocaleDateString('en-US',{weekday:'short',month:'short',day:'numeric'});
+  const am=buildActMap();const mm=Object.fromEntries(MEMBERS.map(m=>[m.id,m]));
+  const tevts=state.events.filter(e=>new Date(e.ts).toDateString()===new Date().toDateString());
+  let lines=[`📊 Family Randomist — ${today}`,'','🏆 Standings:'];
+  sc.forEach((m,i)=>lines.push(`${i===0?'👑':i===1?'🥈':'🥉'} ${m.name}: ${m.pts} pts${m.tpts>0?' (+'+m.tpts+' today)':''}${m.tpts>=50?' 💰':''}`));
+  if(tevts.length>0){
+    lines.push('','📅 Today\'s highlights:');
+    tevts.slice(-6).forEach(e=>{const act=am[e.aid];lines.push(`• ${mm[e.mid]?.name||'?'} — ${act?.name||e.aname||'?'}${e.note?' ('+e.note+')':''} +${e.pts}pts`);});
   }
   return lines.join('\n');
 }
 
-function initText() {
-  document.getElementById('score-preview').textContent = buildScoreText();
-  document.getElementById('badge-preview2').textContent = buildBadgeText();
+function initText(){
+  document.getElementById('score-preview').textContent=buildScoreText();
+  document.getElementById('badge-preview2').textContent=buildBadgeText();
 }
 
-function initPrint() {
-  const sc = getScores();
-  const names = sc.map(m => m.name);
-  document.getElementById('print-header').innerHTML = '<th>Activity</th><th>Pts</th>' + names.map(n => `<th>${n}</th>`).join('');
-  let rows = '';
-  CATEGORIES.forEach(cat => {
-    rows += `<tr class="cat-row"><td colspan="${2+names.length}">${cat.icon} ${cat.label}</td></tr>`;
-    cat.activities.forEach(a => {
-      const cells = sc.map(m => {
-        const cnt = state.events.filter(e => e.mid === m.id && e.aid === a.id).length;
-        return `<td style="text-align:center;">${cnt > 0 ? cnt+'×' : '—'}</td>`;
-      }).join('');
-      rows += `<tr><td>${a.name}${a.rep?' ↻':''}</td><td style="text-align:center;font-weight:600;">+${a.pts}</td>${cells}</tr>`;
+function initRules(){
+  document.getElementById('rules-act-list').innerHTML=CATEGORIES.map(cat=>`
+    <div style="margin-bottom:12px;">
+      <div style="font-size:12px;font-weight:700;color:var(--text2);text-transform:uppercase;letter-spacing:0.05em;margin-bottom:6px;">${cat.icon} ${cat.label}</div>
+      ${cat.activities.map(a=>`
+        <div style="display:flex;align-items:center;gap:8px;padding:5px 0;border-bottom:0.5px solid var(--border);">
+          <span class="pts-badge ${cat.bc}" style="min-width:44px;">+${a.pts}</span>
+          <span style="font-size:12px;flex:1;">${a.name}${a.rep?' ↻':''}</span>
+        </div>`).join('')}
+    </div>`).join('');
+}
+
+function initPrint(){
+  const sc=getScores();const names=sc.map(m=>m.name);
+  document.getElementById('print-header').innerHTML='<th>Activity</th><th>Pts</th>'+names.map(n=>`<th>${n}</th>`).join('');
+  let rows='';
+  CATEGORIES.forEach(cat=>{
+    rows+=`<tr class="cat-row"><td colspan="${2+names.length}">${cat.icon} ${cat.label}</td></tr>`;
+    cat.activities.forEach(a=>{
+      const cells=sc.map(m=>{const cnt=state.events.filter(e=>e.mid===m.id&&e.aid===a.id).length;return`<td style="text-align:center;">${cnt>0?cnt+'×':'—'}</td>`;}).join('');
+      rows+=`<tr><td>${a.name}${a.rep?' ↻':''}</td><td style="text-align:center;font-weight:600;">+${a.pts}</td>${cells}</tr>`;
     });
   });
-  const brow = sc.map(m => {
-    const earned = BADGES.filter(b => b.check(m, state.events, sc));
-    return `<td style="text-align:center;font-size:13px;">${earned.map(b=>b.icon).join('') || '—'}</td>`;
+  const brow=sc.map(m=>{
+    const earned=BADGES.filter(b=>{try{return b.check(m,state.events,sc);}catch(e){return false;}});
+    return`<td style="text-align:center;font-size:13px;">${earned.map(b=>b.icon).join('')||'—'}</td>`;
   }).join('');
-  rows += `<tr class="total-row"><td colspan="2">Badges</td>${brow}</tr>`;
-  const trow = sc.map(m => `<td style="text-align:center;">${m.pts} pts</td>`).join('');
-  rows += `<tr class="total-row"><td colspan="2">Total</td>${trow}</tr>`;
-  document.getElementById('print-body').innerHTML = rows;
+  rows+=`<tr class="total-row"><td colspan="2">Badges</td>${brow}</tr>`;
+  rows+=`<tr class="total-row"><td colspan="2">Total</td>${sc.map(m=>`<td style="text-align:center;">${m.pts} pts</td>`).join('')}</tr>`;
+  document.getElementById('print-body').innerHTML=rows;
 }
 
-function copyText(txt) {
-  navigator.clipboard.writeText(txt).then(() => showToast('Copied!')).catch(() => {
-    const ta = document.createElement('textarea');
-    ta.value = txt; document.body.appendChild(ta); ta.select();
-    document.execCommand('copy'); document.body.removeChild(ta);
-    showToast('Copied!');
+function copyText(txt){
+  navigator.clipboard.writeText(txt).then(()=>showToast('Copied!')).catch(()=>{
+    const ta=document.createElement('textarea');ta.value=txt;document.body.appendChild(ta);ta.select();document.execCommand('copy');document.body.removeChild(ta);showToast('Copied!');
   });
 }
 
-function showToast(msg) {
-  const t = document.getElementById('toast'); t.textContent = msg; t.classList.add('show');
-  setTimeout(() => t.classList.remove('show'), 2000);
+function showToast(msg){
+  const t=document.getElementById('toast');t.textContent=msg;t.classList.add('show');
+  setTimeout(()=>t.classList.remove('show'),2500);
 }
 
-let activeTab = 'scores';
-function switchTab(tab, btn) {
-  document.querySelectorAll('.panel').forEach(p => p.classList.remove('active'));
-  document.querySelectorAll('.nav-btn').forEach(b => b.classList.remove('active'));
-  document.getElementById('panel-' + tab).classList.add('active');
-  btn.classList.add('active');
-  activeTab = tab;
-  if (tab === 'scores') initScores();
-  if (tab === 'log') initLog();
-  if (tab === 'badges') initBadges();
-  if (tab === 'text') initText();
-  if (tab === 'print') initPrint();
+let activeTab='scores';
+function switchTab(tab,btn){
+  document.querySelectorAll('.panel').forEach(p=>p.classList.remove('active'));
+  document.querySelectorAll('.nav-btn').forEach(b=>b.classList.remove('active'));
+  document.getElementById('panel-'+tab).classList.add('active');btn.classList.add('active');activeTab=tab;
+  if(tab==='scores')initScores();if(tab==='log')initLog();if(tab==='badges')initBadges();
+  if(tab==='text')initText();if(tab==='rules')initRules();if(tab==='print')initPrint();
 }
 
-function initAll() {
+function initAll(){
   initScores();
-  if (activeTab === 'log') initLog();
-  else if (activeTab === 'badges') initBadges();
-  else if (activeTab === 'text') initText();
-  else if (activeTab === 'print') initPrint();
+  if(activeTab==='log')initLog();else if(activeTab==='badges')initBadges();
+  else if(activeTab==='text')initText();else if(activeTab==='rules')initRules();else if(activeTab==='print')initPrint();
 }
 
-load();
-initAll();
+load();initAll();
 </script>
 </body>
 </html>
